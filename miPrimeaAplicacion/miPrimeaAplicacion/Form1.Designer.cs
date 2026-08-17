@@ -39,25 +39,28 @@
             // 
             this.lblDe.AutoSize = true;
             this.lblDe.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDe.Location = new System.Drawing.Point(46, 106);
+            this.lblDe.Location = new System.Drawing.Point(69, 163);
+            this.lblDe.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDe.Name = "lblDe";
-            this.lblDe.Size = new System.Drawing.Size(35, 21);
+            this.lblDe.Size = new System.Drawing.Size(57, 33);
             this.lblDe.TabIndex = 0;
             this.lblDe.Text = "De:";
             // 
             // txtCantidad
             // 
-            this.txtCantidad.Location = new System.Drawing.Point(133, 167);
+            this.txtCantidad.Location = new System.Drawing.Point(200, 257);
+            this.txtCantidad.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtCantidad.Name = "txtCantidad";
-            this.txtCantidad.Size = new System.Drawing.Size(124, 20);
+            this.txtCantidad.Size = new System.Drawing.Size(184, 26);
             this.txtCantidad.TabIndex = 1;
             // 
             // btnCalcular
             // 
             this.btnCalcular.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCalcular.Location = new System.Drawing.Point(133, 237);
+            this.btnCalcular.Location = new System.Drawing.Point(200, 365);
+            this.btnCalcular.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCalcular.Name = "btnCalcular";
-            this.btnCalcular.Size = new System.Drawing.Size(190, 61);
+            this.btnCalcular.Size = new System.Drawing.Size(285, 94);
             this.btnCalcular.TabIndex = 2;
             this.btnCalcular.Text = "Calcular";
             this.btnCalcular.UseVisualStyleBackColor = true;
@@ -67,9 +70,10 @@
             // 
             this.lblRespuesta.AutoSize = true;
             this.lblRespuesta.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRespuesta.Location = new System.Drawing.Point(270, 167);
+            this.lblRespuesta.Location = new System.Drawing.Point(405, 257);
+            this.lblRespuesta.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRespuesta.Name = "lblRespuesta";
-            this.lblRespuesta.Size = new System.Drawing.Size(104, 21);
+            this.lblRespuesta.Size = new System.Drawing.Size(157, 33);
             this.lblRespuesta.TabIndex = 5;
             this.lblRespuesta.Text = "Respuesta: ?";
             // 
@@ -77,27 +81,30 @@
             // 
             this.cboDe.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboDe.FormattingEnabled = true;
-            this.cboDe.Location = new System.Drawing.Point(88, 105);
+            this.cboDe.Location = new System.Drawing.Point(132, 162);
+            this.cboDe.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cboDe.Name = "cboDe";
-            this.cboDe.Size = new System.Drawing.Size(121, 21);
+            this.cboDe.Size = new System.Drawing.Size(180, 28);
             this.cboDe.TabIndex = 6;
             // 
             // cboA
             // 
             this.cboA.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboA.FormattingEnabled = true;
-            this.cboA.Location = new System.Drawing.Point(274, 105);
+            this.cboA.Location = new System.Drawing.Point(411, 162);
+            this.cboA.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cboA.Name = "cboA";
-            this.cboA.Size = new System.Drawing.Size(121, 21);
+            this.cboA.Size = new System.Drawing.Size(180, 28);
             this.cboA.TabIndex = 8;
             // 
             // lblA
             // 
             this.lblA.AutoSize = true;
             this.lblA.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblA.Location = new System.Drawing.Point(232, 106);
+            this.lblA.Location = new System.Drawing.Point(348, 163);
+            this.lblA.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblA.Name = "lblA";
-            this.lblA.Size = new System.Drawing.Size(27, 21);
+            this.lblA.Size = new System.Drawing.Size(43, 33);
             this.lblA.TabIndex = 7;
             this.lblA.Text = "A:";
             // 
@@ -105,9 +112,10 @@
             // 
             this.lblCantidad.AutoSize = true;
             this.lblCantidad.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCantidad.Location = new System.Drawing.Point(46, 167);
+            this.lblCantidad.Location = new System.Drawing.Point(69, 257);
+            this.lblCantidad.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCantidad.Name = "lblCantidad";
-            this.lblCantidad.Size = new System.Drawing.Size(81, 21);
+            this.lblCantidad.Size = new System.Drawing.Size(124, 33);
             this.lblCantidad.TabIndex = 9;
             this.lblCantidad.Text = "Cantidad:";
             // 
@@ -116,15 +124,16 @@
             this.cboOpciones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboOpciones.FormattingEnabled = true;
             this.cboOpciones.Items.AddRange(new object[] {
-            "Longitud",
             "Monedas",
             "Masa",
             "Volumen",
+            "Longitud",
             "Almacenamiento",
             "Tiempo"});
-            this.cboOpciones.Location = new System.Drawing.Point(136, 39);
+            this.cboOpciones.Location = new System.Drawing.Point(204, 60);
+            this.cboOpciones.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cboOpciones.Name = "cboOpciones";
-            this.cboOpciones.Size = new System.Drawing.Size(259, 21);
+            this.cboOpciones.Size = new System.Drawing.Size(386, 28);
             this.cboOpciones.TabIndex = 10;
             this.cboOpciones.SelectedIndexChanged += new System.EventHandler(this.cboOpciones_SelectedIndexChanged);
             // 
@@ -132,17 +141,18 @@
             // 
             this.lblOpciones.AutoSize = true;
             this.lblOpciones.Font = new System.Drawing.Font("Times New Roman", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOpciones.Location = new System.Drawing.Point(46, 37);
+            this.lblOpciones.Location = new System.Drawing.Point(69, 57);
+            this.lblOpciones.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblOpciones.Name = "lblOpciones";
-            this.lblOpciones.Size = new System.Drawing.Size(86, 21);
+            this.lblOpciones.Size = new System.Drawing.Size(129, 33);
             this.lblOpciones.TabIndex = 11;
             this.lblOpciones.Text = "Opciones:";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(491, 332);
+            this.ClientSize = new System.Drawing.Size(736, 511);
             this.Controls.Add(this.lblOpciones);
             this.Controls.Add(this.cboOpciones);
             this.Controls.Add(this.lblCantidad);
@@ -153,6 +163,7 @@
             this.Controls.Add(this.btnCalcular);
             this.Controls.Add(this.txtCantidad);
             this.Controls.Add(this.lblDe);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Conversor de Longitud";
             this.Load += new System.EventHandler(this.Form1_Load);
