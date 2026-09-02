@@ -1,0 +1,10 @@
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.csproj.AssemblyReference.cache
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\miPrimeraAplicacion.Form1.resources
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.Properties.Resources.resources
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.csproj.GenerateResource.cache
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.csproj.CoreCompileInputs.cache
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\bin\Debug\Conversor_de_Área_Parcial_1.exe.config
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\bin\Debug\Conversor_de_Área_Parcial_1.exe
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\bin\Debug\Conversor_de_Área_Parcial_1.pdb
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.exe
+C:\Users\valer\source\repos\Conversor_de_Área_Parcial_1\Conversor_de_Área_Parcial_1\obj\Debug\Conversor_de_Área_Parcial_1.pdb
