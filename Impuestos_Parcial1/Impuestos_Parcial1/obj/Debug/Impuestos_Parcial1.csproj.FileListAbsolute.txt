@@ -1,0 +1,10 @@
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\bin\Debug\Impuestos_Parcial1.exe.config
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\bin\Debug\Impuestos_Parcial1.exe
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\bin\Debug\Impuestos_Parcial1.pdb
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.csproj.AssemblyReference.cache
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.Form1.resources
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.Properties.Resources.resources
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.csproj.GenerateResource.cache
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.csproj.CoreCompileInputs.cache
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.exe
+C:\Users\valer\source\repos\Impuestos_Parcial1\Impuestos_Parcial1\obj\Debug\Impuestos_Parcial1.pdb
