@@ -1,0 +1,10 @@
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.csproj.AssemblyReference.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.Properties.Resources.resources
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.csproj.GenerateResource.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.csproj.CoreCompileInputs.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\bin\Debug\Calculo_Meses.exe.config
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\bin\Debug\Calculo_Meses.exe
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\bin\Debug\Calculo_Meses.pdb
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.Form1.resources
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.exe
+C:\Users\romero jr\Desktop\PROGRAMACION\Calculo_Meses\obj\Debug\Calculo_Meses.pdb

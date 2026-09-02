@@ -1,0 +1,10 @@
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\bin\Debug\Consumo_De_Agua.exe.config
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\bin\Debug\Consumo_De_Agua.exe
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\bin\Debug\Consumo_De_Agua.pdb
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.csproj.AssemblyReference.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.Form1.resources
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.Properties.Resources.resources
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.csproj.GenerateResource.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.csproj.CoreCompileInputs.cache
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.exe
+C:\Users\romero jr\Desktop\PROGRAMACION\Consumo_De_Agua\obj\Debug\Consumo_De_Agua.pdb
