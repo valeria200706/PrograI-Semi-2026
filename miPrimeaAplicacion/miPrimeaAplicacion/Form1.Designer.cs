@@ -32,9 +32,10 @@
             // 
             // btnProcesar
             // 
-            this.btnProcesar.Location = new System.Drawing.Point(225, 59);
+            this.btnProcesar.Location = new System.Drawing.Point(338, 91);
+            this.btnProcesar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnProcesar.Name = "btnProcesar";
-            this.btnProcesar.Size = new System.Drawing.Size(100, 69);
+            this.btnProcesar.Size = new System.Drawing.Size(150, 106);
             this.btnProcesar.TabIndex = 0;
             this.btnProcesar.Text = "Procesar";
             this.btnProcesar.UseVisualStyleBackColor = true;
@@ -43,32 +44,37 @@
             // lblSerie
             // 
             this.lblSerie.AutoSize = true;
-            this.lblSerie.Location = new System.Drawing.Point(21, 18);
+            this.lblSerie.Location = new System.Drawing.Point(32, 28);
+            this.lblSerie.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSerie.Name = "lblSerie";
-            this.lblSerie.Size = new System.Drawing.Size(34, 13);
+            this.lblSerie.Size = new System.Drawing.Size(50, 20);
             this.lblSerie.TabIndex = 1;
             this.lblSerie.Text = "Serie:";
             // 
             // txtSerie
             // 
-            this.txtSerie.Location = new System.Drawing.Point(60, 15);
+            this.txtSerie.Location = new System.Drawing.Point(90, 23);
+            this.txtSerie.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtSerie.Name = "txtSerie";
-            this.txtSerie.Size = new System.Drawing.Size(265, 20);
+            this.txtSerie.Size = new System.Drawing.Size(396, 26);
             this.txtSerie.TabIndex = 2;
             // 
             // ltsValores
             // 
             this.ltsValores.FormattingEnabled = true;
-            this.ltsValores.Location = new System.Drawing.Point(24, 59);
+            this.ltsValores.ItemHeight = 20;
+            this.ltsValores.Location = new System.Drawing.Point(36, 91);
+            this.ltsValores.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ltsValores.Name = "ltsValores";
-            this.ltsValores.Size = new System.Drawing.Size(181, 160);
+            this.ltsValores.Size = new System.Drawing.Size(270, 244);
             this.ltsValores.TabIndex = 3;
             // 
             // btnLimpiar
             // 
-            this.btnLimpiar.Location = new System.Drawing.Point(225, 134);
+            this.btnLimpiar.Location = new System.Drawing.Point(338, 206);
+            this.btnLimpiar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(100, 69);
+            this.btnLimpiar.Size = new System.Drawing.Size(150, 106);
             this.btnLimpiar.TabIndex = 4;
             this.btnLimpiar.Text = "Limpiar";
             this.btnLimpiar.UseVisualStyleBackColor = true;
@@ -76,16 +82,18 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(376, 250);
+            this.ClientSize = new System.Drawing.Size(564, 385);
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.ltsValores);
             this.Controls.Add(this.txtSerie);
             this.Controls.Add(this.lblSerie);
             this.Controls.Add(this.btnProcesar);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Conversor de Longitud";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
