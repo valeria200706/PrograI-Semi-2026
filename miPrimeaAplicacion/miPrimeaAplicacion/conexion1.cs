@@ -3,38 +3,66 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
 
-using System.Data; //Esta libreria es para usar bases de datos
-using System.Data.SqlClient; //Esta libreria permite  usar  SQL Server
 namespace miPrimeaAplicacion
 {
-    internal class conexion1
+    internal class Conexion
     {
-        //definir los miembro, atrivutos y metodos de la clase
-        public SqlConnection objConexion = new SqlConnection();//conectarme ala BD
-        public SqlCommand objComando = new SqlCommand();//ejecutar consultas (insert, update, delete, select) sql en la BD
-        public SqlDataAdapter objAdaptador = new SqlDataAdapter();// un puente entre la BD y la aplicacion
-        DataSet objDs = new DataSet(); // representa una copia de la aquitectura de la BD
+        public SqlConnection objConexion = new SqlConnection();
+        public SqlCommand objComando = new SqlCommand();
+        public SqlDataAdapter objDataAdapter = new SqlDataAdapter();
+        DataSet objDs = new DataSet();
 
-        public conexion1() // contrutor e inicializacion de los miembros de la clase 
+        public Conexion()
         {
-            string cadenaConexion = "Data Source=DESKTOP-0J2K7A9;Initial Catalog=BD_Alumnos;Integrated Security=True";
-            objConexion.ConnectionString = cadenaConexion;
-            objConexion.Open(); // abrir la conexion a la BD
+            String cadenaCoenxion = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\db_academica.mdf;Integrated Security=True";
+            objConexion.ConnectionString = cadenaCoenxion;
+            objConexion.Open();
         }
 
         public DataSet obtenerDatos()
         {
-            objDs.Clear(); // limpiar el dataset
-            objComando.Connection = objConexion; // asignar la conexion para ejecutar la consulta a la BD
+            objDs.Clear();
+            objComando.Connection = objConexion;
 
-            objAdaptador.SelectCommand = objComando;
-            objComando.CommandText = "select * from Alumnos"; 
-            objAdaptador.Fill(objDs, "Alumnos"); // tomamos los datos de la BD y llenamos el ds
+            objDataAdapter.SelectCommand = objComando;
+            objComando.CommandText = "SELECT * FROM alumnos";
+            objDataAdapter.Fill(objDs, "alumnos");
 
-            return objDs; 
+            return objDs;
+        }
 
+        public string administrarDatosAlumnos(string[] datos, string accion)
+        {
+            try
+            {
+                objComando.Connection = objConexion;
+
+                if (accion == "nuevo")
+                {
+                    objComando.CommandText = "INSERT INTO alumnos (codigo, nombre, direccion, telefono, email) " +
+                                             "VALUES ('" + datos[1] + "', '" + datos[2] + "', '" + datos[3] + "', '" + datos[4] + "', '" + datos[5] + "')";
+                }
+                else if (accion == "modificar")
+                {
+                    objComando.CommandText = "UPDATE alumnos SET codigo='" + datos[1] + "', nombre='" + datos[2] + "', " +
+                                             "direccion='" + datos[3] + "', telefono='" + datos[4] + "', email='" + datos[5] + "' " +
+                                             "WHERE idAlumno='" + datos[0] + "'";
+                }
+                else if (accion == "eliminar")
+                {
+                    objComando.CommandText = "DELETE FROM alumnos WHERE idAlumno='" + datos[0] + "'";
+                }
+
+                objComando.ExecuteNonQuery();
+                return "1";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
-
 }
