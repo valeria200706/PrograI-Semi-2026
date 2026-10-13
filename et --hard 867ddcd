@@ -1,0 +1,62 @@
+[33m59a56ae[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32macademica[m[33m, [m[1;31morigin/academica[m[33m)[m HEAD@{0}: commit: Creacion del formulario de materias y de periodos
+[33m867ddcd[m HEAD@{1}: reset: moving to 867ddcd
+[33m2a9a6f6[m[33m ([m[1;31mupstream/academica[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m2a9a6f6[m[33m ([m[1;31mupstream/academica[m[33m)[m HEAD@{3}: reset: moving to 2a9a6f6eeba5af163e9d508cea65d255bd69732a
+[33mfaf7f99[m HEAD@{4}: Branch: renamed refs/heads/temp-academica to refs/heads/academica
+[33mfaf7f99[m HEAD@{6}: commit: Creacion de la clase Conexion, y diseño del formulario alumnos
+[33m47530e7[m HEAD@{7}: commit: Creación de la base de datos y las tablas alumnos, matricula y materias
+[33m4576f92[m HEAD@{8}: commit (initial): creación de la rama academica
+[33mc935e8e[m HEAD@{9}: commit: Creacion de la clase Conexion, y diseño del formulario alumnos
+[33me633731[m HEAD@{10}: commit: creación de la rama academica
+[33md64d147[m HEAD@{11}: commit: Limpieza de rama: Se dejan solo archivos de academica
+[33m0eb61bb[m HEAD@{12}: cherry-pick: Creacion de la clase Conexion, y diseño del formulario alumnos
+[33m3773262[m HEAD@{13}: cherry-pick: Creación de la base de datos y las tablas alumnos, matricula y materias
+[33m4f947b3[m HEAD@{14}: cherry-pick: creación de la rama academica
+[33m27c8c1e[m[33m ([m[1;31mfran/main[m[33m, [m[1;31mfran/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{15}: checkout: moving from academica to main
+[33m9ba87af[m HEAD@{16}: reset: moving to HEAD
+[33m9ba87af[m HEAD@{17}: commit: Creacion de la clase Conexion, y diseño del formulario alumnos
+[33m794e69c[m HEAD@{18}: commit: Creación de la base de datos y las tablas alumnos, matricula y materias
+[33mb1839ce[m HEAD@{19}: commit: creación de la rama academica
+[33md4324fa[m HEAD@{20}: checkout: moving from academica to academica
+[33md4324fa[m HEAD@{21}: branch: Created from d4324fa
+[33md4324fa[m HEAD@{22}: checkout: moving from estadisticas to academica
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{23}: reset: moving to HEAD
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{24}: reset: moving to fe93a37
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{25}: pull origin estadisticas: Fast-forward
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{26}: reset: moving to fe93a374330fae702230255199ee3b8a943c8538
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{27}: checkout: moving from estadisticas to estadisticas
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{28}: reset: moving to fe93a37
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{29}: checkout: moving from fe93a374330fae702230255199ee3b8a943c8538 to estadisticas
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{30}: checkout: moving from estadisticas to fe93a37
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{31}: checkout: moving from master to estadisticas
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{32}: checkout: moving from estadisticas to master
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{33}: checkout: moving from mi-rama-conversores to estadisticas
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{34}: checkout: moving from master to mi-rama-conversores
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{35}: checkout: moving from estadisticas to master
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{36}: checkout: moving from master to estadisticas
+[33m43cd732[m[33m ([m[1;31morigin/estadisticas[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{37}: commit: Tarea Terminada de Conversor de Longitud
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{38}: reset: moving to HEAD~1
+[33m0df9326[m HEAD@{39}: commit: Actualizar master con la versión de conversores
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{40}: reset: moving to fe93a37
+[33m37e640c[m HEAD@{41}: rebase (abort): returning to refs/heads/master
+[33m37e640c[m HEAD@{42}: rebase (abort): returning to refs/heads/master
+[33m37e640c[m HEAD@{43}: commit: Actualizar master con la versión de conversores
+[33ma5980f3[m HEAD@{44}: checkout: moving from master to master
+[33ma5980f3[m HEAD@{45}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{46}: checkout: moving from master to mi-rama-conversores
+[33ma5980f3[m HEAD@{47}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{48}: checkout: moving from master to mi-rama-conversores
+[33ma5980f3[m HEAD@{49}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{50}: checkout: moving from master to mi-rama-conversores
+[33ma5980f3[m HEAD@{51}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{52}: checkout: moving from master to mi-rama-conversores
+[33ma5980f3[m HEAD@{53}: commit (merge): Tarea terminada de conversor de longitudes
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{54}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{55}: checkout: moving from master to mi-rama-conversores
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{56}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{57}: checkout: moving from master to mi-rama-conversores
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{58}: checkout: moving from mi-rama-conversores to master
+[33me2973d3[m[33m ([m[1;31morigin/mi-rama-conversores[m[33m, [m[1;32mmi-rama-conversores[m[33m)[m HEAD@{59}: commit: Tarea terminada de Conversor de longitud
+[33md7b3f56[m HEAD@{60}: checkout: moving from d7b3f56a3abbe579c486bef4586bd66118c08b48 to mi-rama-conversores
+[33md7b3f56[m HEAD@{61}: checkout: moving from master to d7b3f56
+[33mfe93a37[m[33m ([m[1;32mestadisticas[m[33m)[m HEAD@{62}: clone: from https://github.com/valeria200706/PrograI-Semi-2026.git
