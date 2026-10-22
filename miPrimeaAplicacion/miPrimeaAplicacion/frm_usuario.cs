@@ -12,6 +12,7 @@ namespace miPrimeaAplicacion
         Conexion objConexion = new Conexion();
         DataSet ds = new DataSet();
         int posicion = 0;
+        string modoAccion = ""; // Variable para saber si estamos guardando uno "nuevo" o "modificando"
 
         // Cajas de texto
         TextBox txtIdUsuario = new TextBox();
@@ -40,7 +41,6 @@ namespace miPrimeaAplicacion
             CargarDatos();
         }
 
-        // Método agregado para resolver la referencia 'frm_usuario_Load' del diseñador
         private void frm_usuario_Load(object sender, EventArgs e)
         {
         }
@@ -71,7 +71,7 @@ namespace miPrimeaAplicacion
             }
 
             // Configuración de Botones de Edición
-            btnAgregar.Text = "Agregar";
+            btnAgregar.Text = "Nuevo";
             btnAgregar.Location = new Point(30, top + 10);
             btnAgregar.Size = new Size(110, 35);
             btnAgregar.Click += btnAgregar_Click;
@@ -117,6 +117,26 @@ namespace miPrimeaAplicacion
             this.Controls.Add(btnAnterior);
             this.Controls.Add(btnSiguiente);
             this.Controls.Add(btnUltimo);
+
+            // Bloquear los controles al inicio
+            HabilitarControles(false);
+        }
+
+        // Método para bloquear o desbloquear las cajas y navegación
+        private void HabilitarControles(bool editando)
+        {
+            txtUsuario.ReadOnly = !editando;
+            txtClave.ReadOnly = !editando;
+            txtConfirmarClave.ReadOnly = !editando;
+            txtNombre.ReadOnly = !editando;
+            txtDireccion.ReadOnly = !editando;
+            txtTelefono.ReadOnly = !editando;
+
+            // Si estamos editando, apagamos la navegación para evitar errores
+            btnPrimero.Enabled = !editando;
+            btnAnterior.Enabled = !editando;
+            btnSiguiente.Enabled = !editando;
+            btnUltimo.Enabled = !editando;
         }
 
         private void CargarDatos()
@@ -124,7 +144,7 @@ namespace miPrimeaAplicacion
             ds = objConexion.obtenerDatos();
             if (ds.Tables["usuarios_usss004826"] != null && ds.Tables["usuarios_usss004826"].Rows.Count > 0)
             {
-                MostrarRegistro(0);
+                MostrarRegistro(posicion);
             }
         }
 
@@ -158,86 +178,104 @@ namespace miPrimeaAplicacion
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            string usuario = txtUsuario.Text.Trim();
-            string clave = txtClave.Text.Trim();
-            string confirmarClave = txtConfirmarClave.Text.Trim();
-            string nombre = txtNombre.Text.Trim();
-            string direccion = txtDireccion.Text.Trim();
-            string telefono = txtTelefono.Text.Trim();
-
-            // 1. Validación de longitud del usuario (mínimo 6, máximo 16)
-            if (usuario.Length < 6 || usuario.Length > 16)
+            if (btnAgregar.Text == "Nuevo")
             {
-                MessageBox.Show("El usuario debe tener entre 6 y 16 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // 1. Limpiar cajas y preparar para ingreso
+                txtIdUsuario.Clear();
+                txtUsuario.Clear();
+                txtClave.Clear();
+                txtConfirmarClave.Clear();
+                txtNombre.Clear();
+                txtDireccion.Clear();
+                txtTelefono.Clear();
+
+                modoAccion = "nuevo";
+                HabilitarControles(true); // Desbloquea las cajas
+
+                // Cambiar el texto de los botones
+                btnAgregar.Text = "Guardar";
+                btnModificar.Text = "Cancelar";
+                btnEliminar.Enabled = false; // Ocultamos eliminar mientras agregamos
+                txtUsuario.Focus();
             }
-
-            // 2. Confirmación de clave
-            if (clave != confirmarClave)
+            else if (btnAgregar.Text == "Guardar")
             {
-                MessageBox.Show("Las contraseñas no coinciden.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                // 2. Proceso de guardado (Validaciones y BD)
+                string usuario = txtUsuario.Text.Trim();
+                string clave = txtClave.Text.Trim();
+                string confirmarClave = txtConfirmarClave.Text.Trim();
+                string nombre = txtNombre.Text.Trim();
+                string direccion = txtDireccion.Text.Trim();
+                string telefono = txtTelefono.Text.Trim();
 
-            // 3. Clave con letras y números
-            if (!clave.Any(char.IsLetter) || !clave.Any(char.IsDigit))
-            {
-                MessageBox.Show("La clave debe contener al menos una letra y un número.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                if (usuario.Length < 6 || usuario.Length > 16)
+                {
+                    MessageBox.Show("El usuario debe tener entre 6 y 16 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            String[] datos = { "", usuario, clave, nombre, direccion, telefono };
-            string respuesta = objConexion.mantenimiento_usuarios_usss004826(datos, "nuevo");
+                if (clave != confirmarClave)
+                {
+                    MessageBox.Show("Las contraseñas no coinciden.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            if (respuesta == "1")
-            {
-                MessageBox.Show("Usuario registrado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CargarDatos();
-                Navegar(ds.Tables["usuarios_usss004826"].Rows.Count - 1);
-            }
-            else
-            {
-                MessageBox.Show("Error al guardar: " + respuesta, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!clave.Any(char.IsLetter) || !clave.Any(char.IsDigit))
+                {
+                    MessageBox.Show("La clave debe contener al menos una letra y un número.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                String[] datos = { txtIdUsuario.Text, usuario, clave, nombre, direccion, telefono };
+                string respuesta = objConexion.mantenimiento_usuarios_usss004826(datos, modoAccion);
+
+                if (respuesta == "1")
+                {
+                    MessageBox.Show("Operación realizada con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Restaurar los botones y bloquear cajas
+                    btnAgregar.Text = "Nuevo";
+                    btnModificar.Text = "Modificar";
+                    btnEliminar.Enabled = true;
+                    HabilitarControles(false);
+
+                    CargarDatos(); // Recargar datos de SQL
+
+                    if (modoAccion == "nuevo")
+                    {
+                        // Si era nuevo, ir al último registro agregado
+                        Navegar(ds.Tables["usuarios_usss004826"].Rows.Count - 1);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Error al guardar: " + respuesta, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtIdUsuario.Text)) return;
-
-            string usuario = txtUsuario.Text.Trim();
-            string clave = txtClave.Text.Trim();
-            string confirmarClave = txtConfirmarClave.Text.Trim();
-
-            if (usuario.Length < 6 || usuario.Length > 16)
+            if (btnModificar.Text == "Modificar")
             {
-                MessageBox.Show("El usuario debe tener entre 6 y 16 caracteres.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (string.IsNullOrEmpty(txtIdUsuario.Text)) return;
+
+                modoAccion = "modificar";
+                HabilitarControles(true); // Desbloqueamos las cajas para que pueda editar
+
+                // El botón Nuevo se vuelve Guardar y Modificar se vuelve Cancelar
+                btnAgregar.Text = "Guardar";
+                btnModificar.Text = "Cancelar";
+                btnEliminar.Enabled = false;
             }
-
-            if (clave != confirmarClave)
+            else if (btnModificar.Text == "Cancelar")
             {
-                MessageBox.Show("Las contraseñas no coinciden.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!clave.Any(char.IsLetter) || !clave.Any(char.IsDigit))
-            {
-                MessageBox.Show("La clave debe contener al menos una letra y un número.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            String[] datos = { txtIdUsuario.Text, usuario, clave, txtNombre.Text, txtDireccion.Text, txtTelefono.Text };
-            string respuesta = objConexion.mantenimiento_usuarios_usss004826(datos, "modificar");
-
-            if (respuesta == "1")
-            {
-                MessageBox.Show("Usuario modificado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CargarDatos();
-            }
-            else
-            {
-                MessageBox.Show("Error al modificar: " + respuesta, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Si se arrepintió, restauramos el sistema
+                btnAgregar.Text = "Nuevo";
+                btnModificar.Text = "Modificar";
+                btnEliminar.Enabled = true;
+                HabilitarControles(false); // Volvemos a bloquear las cajas
+                MostrarRegistro(posicion); // Recargamos el registro original para deshacer cambios visuales
             }
         }
 
@@ -254,6 +292,7 @@ namespace miPrimeaAplicacion
                 {
                     MessageBox.Show("Usuario eliminado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     CargarDatos();
+                    Navegar(0); // Volver al primer registro tras eliminar
                 }
                 else
                 {
