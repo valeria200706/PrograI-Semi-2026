@@ -1,274 +1,128 @@
-﻿@model IEnumerable<BumburysRestaurant.Models.Producto>
-@{
-    ViewData["Title"] = "Toma de Pedidos";
-    var categorias = ViewBag.Categorias as List<BumburysRestaurant.Models.Categoria>;
-    var tiposEntrega = ViewBag.TiposEntrega as List<BumburysRestaurant.Models.TiposEntrega>;
+﻿@{
+    ViewData["Title"] = "Recepción de Pedidos";
 }
 
-<div class="container-fluid mt-3">
-    <div class="row">
-        <!-- Panel Izquierdo: Menú y Productos -->
-        <div class="col-lg-7">
-            <h3 class="fw-bold mb-3"><i class="bi bi-shop"></i> Bumbury's Restaurant - Menú</h3>
-
-            <!-- Filtros por Categorías -->
-            <div class="mb-3 d-flex flex-wrap gap-2">
-                <button class="btn btn-dark active filter-btn" onclick="filtrarCategoria(0, this)">Todos</button>
-                @if (categorias != null)
-                {
-                    foreach (var cat in categorias)
-                    {
-                        <button class="btn btn-outline-dark filter-btn" onclick="filtrarCategoria(@cat.IdCategoria, this)">
-                            @cat.NombreCategoria
-                        </button>
-                    }
-                }
-            </div>
-
-            <!-- Grilla de Productos -->
-            <div class="row row-cols-1 row-cols-md-3 g-3" id="productosGrid">
-                @foreach (var prod in Model)
-                {
-                    <div class="col producto-card" data-categoria="@prod.IdCategoria">
-                        <div class="card h-100 shadow-sm border-0 bg-light">
-                            <div class="card-body d-flex flex-column justify-content-between">
-                                <div>
-                                    <h5 class="card-title fw-bold">@prod.NombreProducto</h5>
-                                    <p class="card-text text-muted small">@prod.Descripcion</p>
-                                </div>
-                                <div class="mt-3 d-flex justify-content-between align-items-center">
-                                    <span class="fs-5 fw-bold text-success">$@prod.PrecioActual.ToString("F2")</span>
-                                    <button class="btn btn-primary btn-sm rounded-circle" onclick="agregarAlCarrito(@prod.IdProducto, '@prod.NombreProducto', @prod.PrecioActual)">
-                                        ➕
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+<div class="row mt-3">
+    <!-- Panel Izquierdo: Menú -->
+    <div class="col-md-8">
+        <!-- Encabezado con Logo -->
+        <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" 
+                 alt="Logo Bumbury's" 
+                 class="me-3 shadow-sm" 
+                 style="height: 65px; border-radius: 8px; object-fit: cover;">
+            <h2 class="mb-0 fw-bold" style="color: #b30000;">Menú del Restaurante</h2>
         </div>
 
-        <!-- Panel Derecho: Ticket del Pedido -->
-        <div class="col-lg-5">
-            <div class="card shadow border-0">
-                <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-receipt"></i> Comanda de Pedido</span>
-                    <button class="btn btn-sm btn-outline-light" onclick="vaciarCarrito()">Limpiar</button>
+        <!-- Filtros de Categoría -->
+        <div class="mb-4">
+            <button class="btn btn-dark me-2 mb-2 px-4 shadow-sm">Todos</button>
+            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">HAMBURGUESAS</button>
+            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">ESPECIALIDADES</button>
+            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">BEBIDAS</button>
+            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">EXTRAS</button>
+        </div>
+
+        <!-- Catálogo de Productos -->
+        <div class="row">
+            <!-- Tarjeta 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">Bumburys Clásica</h5>
+                        <p class="card-text text-muted small flex-grow-1">Hamburguesa tradicional con queso</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                            <span class="fs-5 fw-bold" style="color: #b30000;">$4.50</span>
+                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <!-- Tipo de Entrega -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tipo de Entrega:</label>
-                        <select id="selectTipoEntrega" class="form-select" onchange="evaluarTipoEntrega()">
-                            @if (tiposEntrega != null)
-                            {
-                                foreach (var tipo in tiposEntrega)
-                                {
-                                    <option value="@tipo.IdTipoEntrega">@tipo.NombreTipo</option>
-                                }
-                            }
-                        </select>
+            </div>
+            
+            <!-- Tarjeta 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">Bumburys Doble</h5>
+                        <p class="card-text text-muted small flex-grow-1">Doble carne y doble queso</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                            <span class="fs-5 fw-bold" style="color: #b30000;">$8.00</span>
+                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Datos del Cliente (Mostrados solo si es Domicilio o Llevar) -->
-                    <div id="seccionCliente" class="p-3 bg-light rounded mb-3 d-none">
-                        <h6 class="fw-bold">Datos del Cliente</h6>
-                        <input type="text" id="nombreCliente" class="form-control form-control-sm mb-2" placeholder="Nombre del Cliente">
-                        <input type="text" id="telefonoCliente" class="form-control form-control-sm mb-2" placeholder="Teléfono">
-                        <input type="text" id="direccionCliente" class="form-control form-control-sm mb-2" placeholder="Dirección Exacta">
-                        <input type="text" id="referenciaCliente" class="form-control form-control-sm" placeholder="Referencia / Punto de referencia">
+            <!-- Tarjeta 3 -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">Soda</h5>
+                        <p class="card-text text-muted small flex-grow-1">Bebida fría 500ml</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                            <span class="fs-5 fw-bold" style="color: #b30000;">$1.50</span>
+                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
                     </div>
-
-                    <!-- Tabla de Productos del Carrito -->
-                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-                        <table class="table table-sm table-hover align-middle">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th>Producto</th>
-                                    <th class="text-center">Cant</th>
-                                    <th class="text-end">Subtotal</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="carritoBody">
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No hay productos agregados</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Observación General:</label>
-                        <input type="text" id="observacionGeneral" class="form-control form-control-sm" placeholder="Ej: Entregar con servilletas extra">
-                    </div>
-
-                    <hr />
-                    <div class="d-flex justify-content-between align-items-center fs-4 fw-bold">
-                        <span>Total:</span>
-                        <span class="text-success" id="totalPedido">$0.00</span>
-                    </div>
-
-                    <button class="btn btn-success btn-lg w-100 mt-3 fw-bold" onclick="enviarPedido()">
-                        🚀 Confirmar y Enviar Pedido
-                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Panel Derecho: Comanda -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+            <div class="card-header text-white d-flex justify-content-between align-items-center py-3" style="background-color: #212529; border-bottom: 4px solid #b30000;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>Comanda de Pedido</h5>
+                <button class="btn btn-sm btn-outline-light">Limpiar</button>
+            </div>
+            <div class="card-body bg-light">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-secondary">Tipo de Entrega:</label>
+                    <select class="form-select shadow-sm border-0">
+                        <option>Comer Aquí</option>
+                        <option>Llevar</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm mb-3">
+                    <table class="table table-borderless table-sm text-center mb-0">
+                        <thead class="table-light border-bottom">
+                            <tr>
+                                <th class="py-2">Producto</th>
+                                <th class="py-2">Cant</th>
+                                <th class="py-2">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="text-muted py-4 small">No hay productos agregados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-secondary">Observación General:</label>
+                    <input type="text" class="form-control shadow-sm border-0" placeholder="Ej: Entregar con servilletas extra">
+                </div>
+
+                <hr class="text-muted">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-dark">Total:</h4>
+                    <h4 class="fw-bold mb-0" style="color: #b30000;">$0.00</h4>
+                </div>
+
+                <button class="btn btn-success w-100 py-3 fs-5 shadow-sm fw-bold">
+                    <i class="bi bi-check2-circle me-2"></i> Confirmar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-
-@section Scripts {
-    <script>
-        let carrito = [];
-
-        function agregarAlCarrito(id, nombre, precio) {
-            let item = carrito.find(x => x.idProducto === id);
-            if (item) {
-                item.cantidad++;
-            } else {
-                carrito.push({
-                    idProducto: id,
-                    nombre: nombre,
-                    precio: precio,
-                    cantidad: 1,
-                    indicacion: ''
-                });
-            }
-            renderizarCarrito();
-        }
-
-        function cambiarCantidad(id, cambio) {
-            let item = carrito.find(x => x.idProducto === id);
-            if (item) {
-                item.cantidad += cambio;
-                if (item.cantidad <= 0) {
-                    carrito = carrito.filter(x => x.idProducto !== id);
-                }
-            }
-            renderizarCarrito();
-        }
-
-        function agregarIndicacion(id, texto) {
-            let item = carrito.find(x => x.idProducto === id);
-            if (item) {
-                item.indicacion = texto;
-            }
-        }
-
-        function vaciarCarrito() {
-            carrito = [];
-            renderizarCarrito();
-        }
-
-        function renderizarCarrito() {
-            let tbody = document.getElementById('carritoBody');
-            let totalEl = document.getElementById('totalPedido');
-
-            if (carrito.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay productos agregados</td></tr>';
-                totalEl.innerText = '$0.00';
-                return;
-            }
-
-            let html = '';
-            let total = 0;
-
-            carrito.forEach(item => {
-                let subtotal = item.precio * item.cantidad;
-                total += subtotal;
-
-                html += '<tr>' +
-                    '<td>' +
-                    '<div class="fw-bold">' + item.nombre + '</div>' +
-                    '<input type="text" class="form-control form-control-sm p-1 text-muted" style="font-size: 0.75rem;" ' +
-                    'placeholder="Nota (ej. sin cebolla)" value="' + item.indicacion + '" ' +
-                    'onchange="agregarIndicacion(' + item.idProducto + ', this.value)" />' +
-                    '</td>' +
-                    '<td class="text-center">' +
-                    '<div class="btn-group btn-group-sm">' +
-                    '<button class="btn btn-outline-secondary btn-sm" onclick="cambiarCantidad(' + item.idProducto + ', -1)">-</button>' +
-                    '<span class="btn btn-light disabled btn-sm fw-bold">' + item.cantidad + '</span>' +
-                    '<button class="btn btn-outline-secondary btn-sm" onclick="cambiarCantidad(' + item.idProducto + ', 1)">+</button>' +
-                    '</div>' +
-                    '</td>' +
-                    '<td class="text-end fw-bold">$' + subtotal.toFixed(2) + '</td>' +
-                    '<td class="text-center">' +
-                    '<button class="btn btn-link text-danger p-0" onclick="cambiarCantidad(' + item.idProducto + ', -' + item.cantidad + ')">❌</button>' +
-                    '</td>' +
-                    '</tr>';
-            });
-
-            tbody.innerHTML = html;
-            totalEl.innerText = '$' + total.toFixed(2);
-        }
-
-        function filtrarCategoria(idCat, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'btn-dark'));
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('btn-outline-dark'));
-
-            btn.classList.remove('btn-outline-dark');
-            btn.classList.add('active', 'btn-dark');
-
-            let cards = document.querySelectorAll('.producto-card');
-            cards.forEach(card => {
-                if (idCat === 0 || card.getAttribute('data-categoria') == idCat) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function evaluarTipoEntrega() {
-            let tipo = document.getElementById('selectTipoEntrega').value;
-            let seccion = document.getElementById('seccionCliente');
-            if (tipo === "3" || tipo === "2") {
-                seccion.classList.remove('d-none');
-            } else {
-                seccion.classList.add('d-none');
-            }
-        }
-
-        async function enviarPedido() {
-            if (carrito.length === 0) {
-                alert('Debe agregar al menos un producto al pedido.');
-                return;
-            }
-
-            let payload = {
-                idTipoEntrega: parseInt(document.getElementById('selectTipoEntrega').value),
-                nombreCliente: document.getElementById('nombreCliente').value,
-                telefonoCliente: document.getElementById('telefonoCliente').value,
-                direccionCliente: document.getElementById('direccionCliente').value,
-                referenciaDireccion: document.getElementById('referenciaCliente').value,
-                observacionGeneral: document.getElementById('observacionGeneral').value,
-                detalles: carrito.map(item => ({
-                    idProducto: item.idProducto,
-                    cantidad: item.cantidad,
-                    indicacion: item.indicacion
-                }))
-            };
-
-            try {
-                let response = await fetch('/Recepcion/GuardarOrden', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    let result = await response.json();
-                    alert('¡Pedido #' + result.idOrden + ' registrado con éxito!');
-                    vaciarCarrito();
-                } else {
-                    let err = await response.json();
-                    alert('Error: ' + (err.mensaje || 'No se pudo guardar la orden.'));
-                }
-            } catch (error) {
-                alert('Error de red al conectar con el servidor.');
-            }
-        }
-    </script>
-}

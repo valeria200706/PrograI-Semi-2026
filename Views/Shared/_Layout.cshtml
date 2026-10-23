@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BumburysRestaurant</title>
+    <!-- Favicon del Restaurante -->
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" />
+    
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -13,9 +16,12 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <!-- Barra de navegación en rojo elegante con texto blanco -->
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-4" style="background-color: #b30000;">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">BumburysRestaurant</a>
+                <a class="navbar-brand fw-bold text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-shop me-2"></i>BumburysRestaurant
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -23,26 +29,32 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <!-- Módulos del Restaurante -->
-                        <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Recepcion" asp-action="Index">📌 Recepción</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Recepcion" asp-action="Index">
+                                <i class="bi bi-clipboard-check me-1"></i> Recepción
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Cocina" asp-action="Index">🍳 Cocina</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Cocina" asp-action="Index">
+                                <i class="bi bi-fire me-1"></i> Cocina
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Productos" asp-action="Index">📦 Productos</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Productos" asp-action="Index">
+                                <i class="bi bi-box-seam me-1"></i> Productos
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Categorias" asp-action="Index">🏷 Categorías</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Categorias" asp-action="Index">
+                                <i class="bi bi-tags me-1"></i> Categorías
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Usuarios" asp-action="Index">👥 Usuarios</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                                <i class="bi bi-people me-1"></i> Usuarios
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -56,9 +68,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - BumburysRestaurant - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top footer text-muted mt-auto py-3">
+        <div class="container text-center">
+            &copy; 2026 - BumburysRestaurant
         </div>
     </footer>
 

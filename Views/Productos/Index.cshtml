@@ -1,0 +1,113 @@
+@model IEnumerable<BumburysRestaurant.Models.Producto>
+@{
+    ViewData["Title"] = "Gestión de Productos";
+}
+
+<!-- Alertas de Validación y Éxito -->
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm mt-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Exito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-header text-white d-flex justify-content-between align-items-center py-3" style="background-color: #b30000;">
+        <h4 class="mb-0 fw-bold"><i class="bi bi-box-seam me-2"></i> Gestión de Productos</h4>
+        <a asp-action="Crear" class="btn btn-light text-dark fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Nuevo Producto
+        </a>
+    </div>
+    
+    <div class="card-body bg-light">
+        <!-- Buscador Interactivo -->
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="inputBuscador" class="form-control border-start-0" placeholder="Escribe para buscar por nombre, categoría o descripción..." onkeyup="filtrarTabla()">
+                </div>
+            </div>
+            <div class="col-md-4 text-end text-muted small mt-2 mt-md-0">
+                Total de registros: <span id="contadorRegistros" class="fw-bold text-dark">@(Model?.Count() ?? 0)</span>
+            </div>
+        </div>
+
+        <!-- Tabla de Datos CRUD -->
+        <div class="table-responsive bg-white rounded shadow-sm">
+            <table class="table table-hover align-middle mb-0" id="tablaProductos">
+                <thead class="table-light border-bottom">
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Descripción</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><strong>#@item.IdProducto</strong></td>
+                                <td class="fw-bold" style="color: #b30000;">@item.NombreProducto</td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        @(item.IdCategoriaNavigation != null ? item.IdCategoriaNavigation.NombreCategoria : "Sin Categoría")
+                                    </span>
+                                </td>
+                                <td class="fw-bold text-success">$@item.PrecioActual.ToString("0.00")</td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(item.Descripcion) ? "N/A" : item.Descripcion)</td>
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm" role="group">
+                                        <a asp-action="Editar" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-dark">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                        <!-- Botón Eliminar con validación POST -->
+                                        <form asp-action="Eliminar" asp-route-id="@item.IdProducto" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este producto?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No se encontraron productos registrados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarTabla() {
+            let input = document.getElementById('inputBuscador').value.toLowerCase();
+            let filas = document.querySelectorAll('#tablaProductos tbody tr');
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                let textoFila = fila.innerText.toLowerCase();
+                if (textoFila.includes(input)) {
+                    fila.style.display = '';
+                    visibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+
+            document.getElementById('contadorRegistros').innerText = visibles;
+        }
+    </script>
+}
