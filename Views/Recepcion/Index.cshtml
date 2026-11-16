@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<BumburysRestaurant.Models.Producto>
+@{
     ViewData["Title"] = "Recepción de Pedidos";
 }
 
@@ -8,99 +9,100 @@
         <!-- Encabezado con Logo -->
         <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" 
-                 alt="Logo Bumbury's" 
-                 class="me-3 shadow-sm" 
-                 style="height: 65px; border-radius: 8px; object-fit: cover;">
+                 alt="Logo Bumbury's" class="me-3 shadow-sm" style="height: 65px; border-radius: 8px; object-fit: cover;">
             <h2 class="mb-0 fw-bold" style="color: #b30000;">Menú del Restaurante</h2>
         </div>
 
-        <!-- Filtros de Categoría -->
-        <div class="mb-4">
-            <button class="btn btn-dark me-2 mb-2 px-4 shadow-sm">Todos</button>
-            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">HAMBURGUESAS</button>
-            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">ESPECIALIDADES</button>
-            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">BEBIDAS</button>
-            <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm">EXTRAS</button>
+        <!-- Filtros de Categoría Dinámicos -->
+        <div class="mb-4" id="contenedor-filtros">
+            <button class="btn btn-dark me-2 mb-2 px-4 shadow-sm btn-filtro" data-id="0">Todos</button>
+            @if (ViewBag.Categorias != null)
+            {
+                foreach (var cat in ViewBag.Categorias)
+                {
+                    <button class="btn btn-outline-dark me-2 mb-2 px-4 shadow-sm btn-filtro" data-id="@cat.IdCategoria">
+                        @cat.NombreCategoria.ToUpper()
+                    </button>
+                }
+            }
         </div>
 
-        <!-- Catálogo de Productos -->
-        <div class="row">
-            <!-- Tarjeta 1 -->
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">Bumburys Clásica</h5>
-                        <p class="card-text text-muted small flex-grow-1">Hamburguesa tradicional con queso</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
-                            <span class="fs-5 fw-bold" style="color: #b30000;">$4.50</span>
-                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
+        <!-- Catálogo de Productos Dinámicos -->
+        <div class="row" id="catalogo-productos">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var prod in Model)
+                {
+                    <div class="col-md-4 mb-4 tarjeta-producto" data-categoria="@prod.IdCategoria">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold">@prod.NombreProducto</h5>
+                                <p class="card-text text-muted small flex-grow-1">
+                                    @(string.IsNullOrEmpty(prod.Descripcion) ? "Sin descripción" : prod.Descripcion)
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+                                    <span class="fs-5 fw-bold" style="color: #b30000;">$@prod.PrecioActual.ToString("0.00")</span>
+                                    <button class="btn btn-danger rounded-circle shadow-sm btn-agregar" 
+                                            data-id="@prod.IdProducto" 
+                                            data-nombre="@prod.NombreProducto" 
+                                            data-precio="@prod.PrecioActual.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                            style="width: 40px; height: 40px;">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5 text-muted">
+                    <i class="bi bi-box-seam fs-1 d-block mb-3"></i>
+                    No hay productos disponibles en este momento.
                 </div>
-            </div>
-            
-            <!-- Tarjeta 2 -->
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">Bumburys Doble</h5>
-                        <p class="card-text text-muted small flex-grow-1">Doble carne y doble queso</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
-                            <span class="fs-5 fw-bold" style="color: #b30000;">$8.00</span>
-                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta 3 -->
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">Soda</h5>
-                        <p class="card-text text-muted small flex-grow-1">Bebida fría 500ml</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
-                            <span class="fs-5 fw-bold" style="color: #b30000;">$1.50</span>
-                            <button class="btn btn-danger rounded-circle shadow-sm" style="width: 40px; height: 40px;">
-                                <i class="bi bi-plus-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 
     <!-- Panel Derecho: Comanda -->
     <div class="col-md-4">
-        <div class="card border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+        <div class="card border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; position: sticky; top: 20px;">
             <div class="card-header text-white d-flex justify-content-between align-items-center py-3" style="background-color: #212529; border-bottom: 4px solid #b30000;">
                 <h5 class="mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>Comanda de Pedido</h5>
-                <button class="btn btn-sm btn-outline-light">Limpiar</button>
+                <button class="btn btn-sm btn-outline-light" id="btn-limpiar">Limpiar</button>
             </div>
             <div class="card-body bg-light">
+                
                 <div class="mb-3">
                     <label class="form-label fw-bold small text-secondary">Tipo de Entrega:</label>
-                    <select class="form-select shadow-sm border-0">
-                        <option>Comer Aquí</option>
-                        <option>Llevar</option>
+                    <select class="form-select shadow-sm border-0" id="tipo-entrega">
+                        @if (ViewBag.TiposEntrega != null)
+                        {
+                            foreach (var tipo in ViewBag.TiposEntrega)
+                            {
+                                <option value="@tipo.IdTipoEntrega">@tipo.NombreTipo</option> 
+                            }
+                        }
+                        else
+                        {
+                            <option value="1">Comer Aquí</option>
+                            <option value="2">Para Llevar</option>
+                        }
                     </select>
                 </div>
 
-                <div class="table-responsive bg-white rounded shadow-sm mb-3">
+                <!-- Tabla del Carrito -->
+                <div class="table-responsive bg-white rounded shadow-sm mb-3" style="max-height: 250px; overflow-y: auto;">
                     <table class="table table-borderless table-sm text-center mb-0">
-                        <thead class="table-light border-bottom">
+                        <thead class="table-light border-bottom sticky-top">
                             <tr>
-                                <th class="py-2">Producto</th>
+                                <th class="py-2 text-start px-3">Producto</th>
                                 <th class="py-2">Cant</th>
-                                <th class="py-2">Subtotal</th>
+                                <th class="py-2 text-end px-3">Subtotal</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="cuerpo-comanda">
                             <tr>
                                 <td colspan="3" class="text-muted py-4 small">No hay productos agregados</td>
                             </tr>
@@ -110,19 +112,158 @@
 
                 <div class="mb-4">
                     <label class="form-label fw-bold small text-secondary">Observación General:</label>
-                    <input type="text" class="form-control shadow-sm border-0" placeholder="Ej: Entregar con servilletas extra">
+                    <input type="text" id="observacion-general" class="form-control shadow-sm border-0" placeholder="Ej: Entregar con servilletas extra">
                 </div>
 
                 <hr class="text-muted">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h4 class="fw-bold mb-0 text-dark">Total:</h4>
-                    <h4 class="fw-bold mb-0" style="color: #b30000;">$0.00</h4>
+                    <h4 class="fw-bold mb-0" id="total-comanda" style="color: #b30000;">$0.00</h4>
                 </div>
 
-                <button class="btn btn-success w-100 py-3 fs-5 shadow-sm fw-bold">
+                <button class="btn btn-success w-100 py-3 fs-5 shadow-sm fw-bold" id="btn-confirmar">
                     <i class="bi bi-check2-circle me-2"></i> Confirmar Pedido
                 </button>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let comanda = [];
+
+        // 1. Filtrado de Categorías
+        document.querySelectorAll('.btn-filtro').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-filtro').forEach(b => {
+                    b.classList.remove('btn-dark');
+                    b.classList.add('btn-outline-dark');
+                });
+                this.classList.remove('btn-outline-dark');
+                this.classList.add('btn-dark');
+
+                let catId = this.getAttribute('data-id');
+                document.querySelectorAll('.tarjeta-producto').forEach(tarjeta => {
+                    if (catId === "0" || tarjeta.getAttribute('data-categoria') === catId) {
+                        tarjeta.style.display = 'block';
+                    } else {
+                        tarjeta.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 2. Agregar Producto a Comanda
+        document.querySelectorAll('.btn-agregar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let id = this.getAttribute('data-id');
+                let nombre = this.getAttribute('data-nombre');
+                let precio = parseFloat(this.getAttribute('data-precio'));
+
+                let index = comanda.findIndex(p => p.IdProducto === id);
+                if (index !== -1) {
+                    comanda[index].Cantidad++;
+                } else {
+                    comanda.push({ IdProducto: id, Nombre: nombre, Precio: precio, Cantidad: 1 });
+                }
+                actualizarInterfaz();
+            });
+        });
+
+        // 3. Renderizar Tabla y Total
+        function actualizarInterfaz() {
+            let tbody = document.getElementById('cuerpo-comanda');
+            let totalEl = document.getElementById('total-comanda');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            if (comanda.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted py-4 small">No hay productos agregados</td></tr>';
+                totalEl.innerText = '$0.00';
+                return;
+            }
+
+            comanda.forEach((item, index) => {
+                let subtotal = item.Precio * item.Cantidad;
+                total += subtotal;
+                
+                tbody.innerHTML += `
+                    <tr class="align-middle border-bottom">
+                        <td class="text-start px-3 small fw-bold text-dark">${item.Nombre}</td>
+                        <td style="min-width: 80px;">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <button class="btn btn-sm btn-light border p-0 rounded-circle text-danger fw-bold" style="width: 25px; height: 25px;" onclick="cambiarCantidad(${index}, -1)">-</button>
+                                <span class="mx-2 fw-bold">${item.Cantidad}</span>
+                                <button class="btn btn-sm btn-light border p-0 rounded-circle text-success fw-bold" style="width: 25px; height: 25px;" onclick="cambiarCantidad(${index}, 1)">+</button>
+                            </div>
+                        </td>
+                        <td class="text-end px-3 fw-bold text-success">$${subtotal.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            totalEl.innerText = `$${total.toFixed(2)}`;
+        }
+
+        // 4. Cambiar Cantidad de Producto
+        window.cambiarCantidad = function(index, delta) {
+            comanda[index].Cantidad += delta;
+            if (comanda[index].Cantidad <= 0) {
+                comanda.splice(index, 1);
+            }
+            actualizarInterfaz();
+        }
+
+        // 5. Limpiar Comanda Completa
+        document.getElementById('btn-limpiar').addEventListener('click', () => {
+            comanda = [];
+            document.getElementById('observacion-general').value = '';
+            actualizarInterfaz();
+        });
+
+        // 6. Enviar Pedido a Base de Datos
+        document.getElementById('btn-confirmar').addEventListener('click', async () => {
+            if (comanda.length === 0) {
+                alert('La comanda está vacía. Selecciona productos del menú.');
+                return;
+            }
+
+            let payload = {
+                IdTipoEntrega: parseInt(document.getElementById('tipo-entrega').value) || 1,
+                ObservacionGeneral: document.getElementById('observacion-general').value,
+                Detalles: comanda.map(p => ({
+                    IdProducto: parseInt(p.IdProducto),
+                    Cantidad: p.Cantidad,
+                    Indicacion: "" 
+                }))
+            };
+
+            let btnConfirmar = document.getElementById('btn-confirmar');
+            btnConfirmar.disabled = true;
+            btnConfirmar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Procesando...';
+
+            try {
+                let response = await fetch('/Recepcion/GuardarOrden', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                let data = await response.json();
+
+                if (response.ok && data.exito) {
+                    alert('¡Pedido exitoso! Se ha generado la Orden #' + data.idOrden);
+                    document.getElementById('btn-limpiar').click(); 
+                } else {
+                    alert(data.mensaje || 'Error desconocido al guardar la orden.');
+                }
+            } catch (error) {
+                console.error("Error al conectar con servidor: ", error);
+                alert('Hubo un error de conexión al enviar el pedido.');
+            } finally {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '<i class="bi bi-check2-circle me-2"></i> Confirmar Pedido';
+            }
+        });
+    </script>
+}

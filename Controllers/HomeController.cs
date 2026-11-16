@@ -1,25 +1,27 @@
-using BumburysRestaurant.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using BumburysRestaurant.Models;
 
 namespace BumburysRestaurant.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly BumburysRestaurantDbContext _context;
+
+        public HomeController(BumburysRestaurantDbContext context)
         {
-            return View();
+            _context = context;
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            // Métricas rápidas para el Dashboard
+            ViewBag.TotalProductos = await _context.Productos.CountAsync(p => p.Activo);
+            ViewBag.TotalCategorias = await _context.Categorias.CountAsync(c => c.Activa);
+            ViewBag.OrdenesPendientes = await _context.Ordenes.CountAsync(o => o.IdEstado == 1 || o.IdEstado == 2);
+            ViewBag.VentasTotalesDia = await _context.PagosVentas.SumAsync(p => (decimal?)p.MontoAplicado) ?? 0;
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

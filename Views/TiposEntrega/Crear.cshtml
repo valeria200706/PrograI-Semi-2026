@@ -1,0 +1,38 @@
+@model BumburysRestaurant.Models.TiposEntrega
+@{
+    ViewData["Title"] = "Nuevo Tipo de Entrega";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header text-white py-3" style="background-color: #b30000;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Tipo de Entrega</h5>
+            </div>
+            <div class="card-body bg-light p-4">
+                <form asp-action="Crear">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="NombreTipo" class="form-label fw-bold">Nombre de Modalidad</label>
+                        <input asp-for="NombreTipo" class="form-control shadow-sm" placeholder="Ej. Delivery / Domicilio" required />
+                        <span asp-validation-for="NombreTipo" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary shadow-sm">
+                            <i class="bi bi-arrow-left me-1"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-success shadow-sm fw-bold px-4">
+                            <i class="bi bi-save me-1"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

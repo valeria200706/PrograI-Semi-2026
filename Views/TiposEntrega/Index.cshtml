@@ -1,0 +1,104 @@
+@model IEnumerable<BumburysRestaurant.Models.TiposEntrega>
+@{
+    ViewData["Title"] = "Tipos de Entrega";
+}
+
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm mt-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Exito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm mt-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm mt-4">
+    <div class="card-header text-white d-flex justify-content-between align-items-center py-3" style="background-color: #b30000;">
+        <h4 class="mb-0 fw-bold"><i class="bi bi-truck me-2"></i> Tipos de Entrega</h4>
+        <a asp-action="Crear" class="btn btn-light text-dark fw-bold shadow-sm">
+            <i class="bi bi-plus-circle me-1"></i> Nuevo Tipo
+        </a>
+    </div>
+
+    <div class="card-body bg-light">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-8">
+                <div class="input-group shadow-sm">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="inputBuscador" class="form-control border-start-0" placeholder="Buscar tipo de entrega..." onkeyup="filtrarTabla()">
+                </div>
+            </div>
+            <div class="col-md-4 text-end text-muted small mt-2 mt-md-0">
+                Total de registros: <span id="contadorRegistros" class="fw-bold text-dark">@(Model?.Count() ?? 0)</span>
+            </div>
+        </div>
+
+        <div class="table-responsive bg-white rounded shadow-sm">
+            <table class="table table-hover align-middle mb-0" id="tablaTipos">
+                <thead class="table-light border-bottom">
+                    <tr>
+                        <th>ID</th>
+                        <th>Modalidad / Tipo de Entrega</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><strong>#@item.IdTipoEntrega</strong></td>
+                                <td class="fw-bold" style="color: #b30000;">@item.NombreTipo</td>
+                                <td class="text-center">
+                                    <div class="btn-group shadow-sm">
+                                        <a asp-action="Editar" asp-route-id="@item.IdTipoEntrega" class="btn btn-sm btn-outline-dark">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                        <form asp-action="Eliminar" asp-route-id="@item.IdTipoEntrega" method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar este tipo de entrega?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No hay tipos de entrega registrados.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarTabla() {
+            let input = document.getElementById('inputBuscador').value.toLowerCase();
+            let filas = document.querySelectorAll('#tablaTipos tbody tr');
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                if (fila.innerText.toLowerCase().includes(input)) {
+                    fila.style.display = '';
+                    visibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+            document.getElementById('contadorRegistros').innerText = visibles;
+        }
+    </script>
+}
