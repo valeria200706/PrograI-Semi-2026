@@ -1,118 +1,174 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@{
+    string rolActual = User.FindFirstValue(ClaimTypes.Role) ?? "";
+    bool esAdmin = rolActual.Equals("Administrador", StringComparison.OrdinalIgnoreCase);
+    bool esRecepcion = rolActual.Equals("Recepcion", StringComparison.OrdinalIgnoreCase);
+    bool esMesero = rolActual.Equals("Mesero", StringComparison.OrdinalIgnoreCase);
+    bool esCajero = rolActual.Equals("Cajero", StringComparison.OrdinalIgnoreCase);
+    bool esCocina = rolActual.Equals("Cocina", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BumburysRestaurant</title>
-    <!-- Favicon del Restaurante -->
     <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" />
-    
-    <script type="importmap"></script>
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BumburysRestaurant.styles.css" asp-append-version="true" />
-    <!-- Iconos de Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #b30000; border-bottom: 3px solid #7a0000;">
             <div class="container-fluid px-4">
-                <!-- Marca con Logo -->
-                <a class="navbar-brand fw-bold d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-controller="Account" asp-action="Login">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" 
                          alt="Logo" class="me-2 rounded shadow-sm" style="height: 36px; width: 36px; object-fit: cover; border: 1px solid rgba(255,255,255,0.4);">
                     <span class="tracking-tight">Bumbury's</span>
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPrincipal" aria-controls="navbarPrincipal" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPrincipal">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarPrincipal">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Recepcion" asp-action="Index">
-                                <i class="bi bi-shop me-1"></i> Recepción
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Cocina" asp-action="Index">
-                                <i class="bi bi-fire me-1"></i> Cocina
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Pagos" asp-action="Index">
-                                <i class="bi bi-cash-coin me-1"></i> Caja
-                            </a>
-                        </li>
+                        @if (esAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                </a>
+                            </li>
+                        }
 
-                        <!-- Menú Desplegable para Reportes e Historiales -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white fw-semibold px-3 rounded" href="#" id="navbarDropdownReportes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-graph-up-arrow me-1"></i> Reportes
-                            </a>
-                            <ul class="dropdown-menu shadow border-0 mt-2" aria-labelledby="navbarDropdownReportes">
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Reportes" asp-action="HistorialVentas">
-                                        <i class="bi bi-cash-stack text-success me-2"></i> Historial de Ventas
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Reportes" asp-action="HistorialOrdenes">
-                                        <i class="bi bi-journal-text text-danger me-2"></i> Historial de Pedidos
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        @if (esMesero)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Recepcion" asp-action="PanelMesero">
+                                    <i class="bi bi-speedometer2 me-1"></i> Mi Panel
+                                </a>
+                            </li>
+                        }
 
-                        <!-- Menú Desplegable para Catálogos CRUD -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white fw-semibold px-3 rounded" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-gear-fill me-1"></i> Administración
-                            </a>
-                            <ul class="dropdown-menu shadow border-0 mt-2" aria-labelledby="navbarDropdownAdmin">
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Productos" asp-action="Index">
-                                        <i class="bi bi-box-seam text-danger me-2"></i> Gestión de Productos
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Categorias" asp-action="Index">
-                                        <i class="bi bi-tags text-danger me-2"></i> Categorías del Menú
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="MetodosPago" asp-action="Index">
-                                        <i class="bi bi-credit-card text-danger me-2"></i> Métodos de Pago
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="TiposEntrega" asp-action="Index">
-                                        <i class="bi bi-truck text-danger me-2"></i> Tipos de Entrega
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item py-2" asp-controller="Usuarios" asp-action="Index">
-                                        <i class="bi bi-people text-dark me-2"></i> Usuarios y Roles
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        @if (esRecepcion)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Recepcion" asp-action="PanelRecepcion">
+                                    <i class="bi bi-speedometer2 me-1"></i> Panel Sala
+                                </a>
+                            </li>
+                        }
+
+                        @if (esCajero)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Pagos" asp-action="PanelCaja">
+                                    <i class="bi bi-grid-1x2-fill me-1"></i> Panel Caja
+                                </a>
+                            </li>
+                        }
+
+                        @if (esAdmin || esRecepcion || esMesero || esCajero)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Recepcion" asp-action="Index">
+                                    <i class="bi bi-shop me-1"></i> @(esCajero ? "Pedido Para Llevar" : "Tomar Pedido")
+                                </a>
+                            </li>
+                        }
+
+                        @if (esAdmin || esMesero || esCajero)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Pagos" asp-action="Index">
+                                    <i class="bi bi-cash-coin me-1"></i> @(esMesero ? "Mis Cobros" : "Cobrar")
+                                </a>
+                            </li>
+                        }
+
+                        @if (esAdmin || esCocina)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Cocina" asp-action="Index">
+                                    <i class="bi bi-fire me-1"></i> Cocina
+                                </a>
+                            </li>
+                        }
+
+                        @if (esCajero)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Reportes" asp-action="HistorialVentas">
+                                    <i class="bi bi-receipt-cutoff me-1"></i> Historial Cobros
+                                </a>
+                            </li>
+                        }
+
+                        @if (esRecepcion)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white fw-semibold px-3 rounded" asp-controller="Reportes" asp-action="HistorialOrdenes">
+                                    <i class="bi bi-journal-text me-1"></i> Historial de Pedidos
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white fw-semibold px-3 rounded" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-book me-1"></i> Catálogo Menú
+                                </a>
+                                <ul class="dropdown-menu shadow border-0 mt-2">
+                                    <li><a class="dropdown-item py-2" asp-controller="Productos" asp-action="Index"><i class="bi bi-box-seam text-danger me-2"></i> Productos</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Categorias" asp-action="Index"><i class="bi bi-tags text-danger me-2"></i> Categorías</a></li>
+                                </ul>
+                            </li>
+                        }
+
+                        @if (esAdmin)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white fw-semibold px-3 rounded" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-graph-up-arrow me-1"></i> Reportes
+                                </a>
+                                <ul class="dropdown-menu shadow border-0 mt-2">
+                                    <li><a class="dropdown-item py-2" asp-controller="Reportes" asp-action="HistorialVentas"><i class="bi bi-cash-stack text-success me-2"></i> Historial de Ventas</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Reportes" asp-action="HistorialOrdenes"><i class="bi bi-journal-text text-danger me-2"></i> Historial de Pedidos</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white fw-semibold px-3 rounded" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-gear-fill me-1"></i> Administración
+                                </a>
+                                <ul class="dropdown-menu shadow border-0 mt-2">
+                                    <li><a class="dropdown-item py-2" asp-controller="Productos" asp-action="Index"><i class="bi bi-box-seam text-danger me-2"></i> Gestión de Productos</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Categorias" asp-action="Index"><i class="bi bi-tags text-danger me-2"></i> Categorías del Menú</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="MetodosPago" asp-action="Index"><i class="bi bi-credit-card text-danger me-2"></i> Métodos de Pago</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="TiposEntrega" asp-action="Index"><i class="bi bi-truck text-danger me-2"></i> Tipos de Entrega</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Usuarios" asp-action="Index"><i class="bi bi-people text-dark me-2"></i> Usuarios y Roles</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
 
-                    <!-- Indicador de Sistema Interno (Luego aquí irá el usuario logueado) -->
-                    <div class="d-flex align-items-center text-white small">
-                        <span class="badge bg-dark bg-opacity-50 px-3 py-2 border border-light border-opacity-25">
-                            <i class="bi bi-shield-lock me-1"></i> Back-Office Interno
-                        </span>
-                    </div>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <div class="d-flex align-items-center gap-3 text-white ms-auto">
+                            <div class="text-end d-none d-sm-block lh-1">
+                                <span class="fw-bold d-block small">@User.Identity.Name</span>
+                                <span class="badge bg-dark bg-opacity-75 mt-1" style="font-size: 0.7rem;">@rolActual</span>
+                            </div>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-dark btn-sm fw-bold px-3 shadow-sm">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Salir
+                                </button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>
@@ -125,9 +181,7 @@
     </div>
 
     <footer class="border-top footer text-muted mt-auto py-3 bg-white">
-        <div class="container text-center">
-            &copy; 2026 - BumburysRestaurant
-        </div>
+        <div class="container text-center">&copy; 2026 - BumburysRestaurant</div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

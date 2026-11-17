@@ -1,11 +1,24 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using BumburysRestaurant.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Conexión a SQL Server
 builder.Services.AddDbContext<BumburysRestaurantDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BumburysConnection")));
 
-// Add services to the container.
+// Servicios MVC
 builder.Services.AddControllersWithViews();
+
+// Configuración de Autenticación por Cookies
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccesoDenegado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    });
 
 var app = builder.Build();
 
@@ -13,20 +26,19 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Recepcion}/{action=Index}/{id?}");
-
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

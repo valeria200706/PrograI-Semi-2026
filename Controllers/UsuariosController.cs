@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BumburysRestaurant.Models;
 
 namespace BumburysRestaurant.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class UsuariosController : Controller
     {
         private readonly BumburysRestaurantDbContext _context;
@@ -44,6 +46,10 @@ namespace BumburysRestaurant.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear([Bind("NombreCompleto,NombreUsuario,Contrasena,IdRol")] Usuario usuario)
         {
+            // Ignorar propiedades de navegación para que ModelState.IsValid funcione con IdRol
+            ModelState.Remove("IdRolNavigation");
+            ModelState.Remove("Ordenes");
+
             // Validar que el nombre de usuario no esté duplicado
             if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario.ToLower() == usuario.NombreUsuario.ToLower()))
             {
@@ -84,6 +90,10 @@ namespace BumburysRestaurant.Controllers
         {
             if (id != usuario.IdUsuario) return NotFound();
 
+            // Ignorar propiedades de navegación para que ModelState.IsValid funcione al actualizar
+            ModelState.Remove("IdRolNavigation");
+            ModelState.Remove("Ordenes");
+
             // Validar usuario duplicado exceptuando el actual
             if (await _context.Usuarios.AnyAsync(u => u.NombreUsuario.ToLower() == usuario.NombreUsuario.ToLower() && u.IdUsuario != id))
             {
@@ -120,6 +130,13 @@ namespace BumburysRestaurant.Controllers
             var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario != null)
             {
+                bool tieneOrdenes = await _context.Ordenes.AnyAsync(o => o.IdUsuario == id);
+                if (tieneOrdenes)
+                {
+                    TempData["Error"] = "No se puede eliminar este usuario porque ya tiene órdenes registradas. Puedes editarlo y desactivarlo.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Usuarios.Remove(usuario);
                 await _context.SaveChangesAsync();
                 TempData["Exito"] = "¡Usuario eliminado correctamente!";

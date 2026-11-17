@@ -19,7 +19,7 @@ public partial class Usuario
 
     public DateTime FechaCreacion { get; set; }
 
-    public virtual Role IdRolNavigation { get; set; } = null!;
+    public virtual Role? IdRolNavigation { get; set; }
 
     public virtual ICollection<Ordene> Ordenes { get; set; } = new List<Ordene>();
 }

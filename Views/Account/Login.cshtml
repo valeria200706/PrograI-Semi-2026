@@ -1,0 +1,61 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión - Bumbury's Restaurant</title>
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+<body class="d-flex align-items-center justify-content-center min-vh-100" style="background: linear-gradient(135deg, #141414 0%, #2b0000 100%);">
+
+    <div class="card border-0 shadow-lg" style="width: 100%; max-width: 400px; border-radius: 14px; overflow: hidden;">
+        <div class="text-center text-white py-4 px-3" style="background-color: #b30000; border-bottom: 4px solid #7a0000;">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" 
+                 alt="Logo" class="rounded-circle shadow mb-2" style="width: 72px; height: 72px; object-fit: cover; border: 2px solid #fff;">
+            <h4 class="fw-bold mb-0">Bumbury's Restaurant</h4>
+            <small class="opacity-75">Acceso al Sistema Interno (POS)</small>
+        </div>
+
+        <div class="card-body p-4 bg-white">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger py-2 small shadow-sm">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> @ViewBag.Error
+                </div>
+            }
+
+            <form asp-controller="Account" asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-secondary small">USUARIO</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-person-fill text-danger"></i></span>
+                        <input type="text" name="nombreUsuario" class="form-control" placeholder="Ingresa tu usuario" required autofocus />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-secondary small">CONTRASEÑA</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-lock-fill text-danger"></i></span>
+                        <input type="password" name="contrasena" class="form-control" placeholder="••••••••" required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow-sm">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar al Sistema
+                </button>
+            </form>
+        </div>
+        <div class="card-footer bg-light text-center py-2 border-0">
+            <small class="text-muted">Bumbury's POS &bull; Acceso Autorizado</small>
+        </div>
+    </div>
+</body>
+</html>

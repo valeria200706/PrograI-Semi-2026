@@ -27,6 +27,8 @@ public partial class BumburysRestaurantDbContext : DbContext
 
     public virtual DbSet<IndicacionesDetalle> IndicacionesDetalles { get; set; }
 
+    public virtual DbSet<Mesa> Mesas { get; set; }
+
     public virtual DbSet<MetodosPago> MetodosPagos { get; set; }
 
     public virtual DbSet<Ordene> Ordenes { get; set; }
@@ -178,6 +180,22 @@ public partial class BumburysRestaurantDbContext : DbContext
                 .HasConstraintName("FK_indicaciones_detalle");
         });
 
+        modelBuilder.Entity<Mesa>(entity =>
+        {
+            entity.HasKey(e => e.IdMesa);
+            entity.ToTable("mesas");
+            entity.Property(e => e.IdMesa).HasColumnName("id_mesa");
+            entity.Property(e => e.NumeroMesa)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("numero_mesa");
+            entity.Property(e => e.Capacidad).HasColumnName("capacidad");
+            entity.Property(e => e.EstadoMesa)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("estado_mesa");
+        });
+
         modelBuilder.Entity<MetodosPago>(entity =>
         {
             entity.HasKey(e => e.IdMetodoPago).HasName("PK__metodos___85BE0EBC45C6215D");
@@ -212,6 +230,7 @@ public partial class BumburysRestaurantDbContext : DbContext
             entity.Property(e => e.IdCliente).HasColumnName("id_cliente");
             entity.Property(e => e.IdDireccion).HasColumnName("id_direccion");
             entity.Property(e => e.IdEstado).HasColumnName("id_estado");
+            entity.Property(e => e.IdMesa).HasColumnName("id_mesa");
             entity.Property(e => e.IdTipoEntrega).HasColumnName("id_tipo_entrega");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.ObservacionGeneral)
@@ -231,6 +250,10 @@ public partial class BumburysRestaurantDbContext : DbContext
                 .HasForeignKey(d => d.IdEstado)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ordenes_estados");
+
+            entity.HasOne(d => d.IdMesaNavigation).WithMany(p => p.Ordenes)
+                .HasForeignKey(d => d.IdMesa)
+                .HasConstraintName("FK_ordenes_mesas");
 
             entity.HasOne(d => d.IdTipoEntregaNavigation).WithMany(p => p.Ordenes)
                 .HasForeignKey(d => d.IdTipoEntrega)

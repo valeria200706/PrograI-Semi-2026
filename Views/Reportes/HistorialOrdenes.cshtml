@@ -62,7 +62,7 @@
             <div class="col-md-5">
                 <div class="input-group shadow-sm">
                     <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                    <input type="text" name="buscar" value="@ViewBag.BuscarActual" class="form-control border-start-0" placeholder="Buscar por N° Orden u observación...">
+                    <input type="text" name="buscar" value="@ViewBag.BuscarActual" class="form-control border-start-0" placeholder="Buscar por N° Orden, mesero u observación...">
                 </div>
             </div>
             <div class="col-md-4">
@@ -87,6 +87,7 @@
                     <tr>
                         <th>N° Orden</th>
                         <th>Fecha y Hora</th>
+                        <th>Atendido por</th>
                         <th>Modalidad</th>
                         <th>Productos</th>
                         <th>Total</th>
@@ -113,6 +114,9 @@
                             <tr>
                                 <td class="fw-bold fs-6">#@orden.IdOrden</td>
                                 <td class="small">@orden.FechaHora.ToString("dd/MM/yyyy hh:mm tt")</td>
+                                <td class="small fw-semibold text-dark">
+                                    <i class="bi bi-person-badge text-danger me-1"></i>@(orden.IdUsuarioNavigation?.NombreCompleto ?? "Sistema")
+                                </td>
                                 <td>
                                     <span class="badge bg-light text-dark border">
                                         @(orden.IdTipoEntregaNavigation != null ? orden.IdTipoEntregaNavigation.NombreTipo : "N/A")
@@ -130,6 +134,7 @@
                                     @if (orden.IdEstado == 1 || orden.IdEstado == 2 || orden.IdEstado == 3)
                                     {
                                         <form asp-action="CancelarOrden" method="post" style="display:inline;" onsubmit="return confirm('¿Seguro que deseas cancelar la Orden #@orden.IdOrden?');">
+                                            @Html.AntiForgeryToken()
                                             <input type="hidden" name="idOrden" value="@orden.IdOrden" />
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar Orden">
                                                 <i class="bi bi-x-circle"></i> Anular
@@ -147,7 +152,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">No se encontraron pedidos registrados.</td>
+                            <td colspan="8" class="text-center py-5 text-muted">No se encontraron pedidos registrados.</td>
                         </tr>
                     }
                 </tbody>

@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BumburysRestaurant.Models;
 
 namespace BumburysRestaurant.Controllers
 {
+    [Authorize(Roles = "Administrador,Recepcion,Cajero")]
     public class ReportesController : Controller
     {
         private readonly BumburysRestaurantDbContext _context;
@@ -13,13 +15,16 @@ namespace BumburysRestaurant.Controllers
             _context = context;
         }
 
-        // 1. HISTORIAL DE VENTAS (Pagos cobrados con detalle completo de la orden)
+        // 1. HISTORIAL DE VENTAS (Administrador y Cajero en modo consulta)
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> HistorialVentas(string buscar)
         {
             var query = _context.PagosVentas
                 .Include(p => p.IdMetodoPagoNavigation)
                 .Include(p => p.IdOrdenNavigation)
                     .ThenInclude(o => o!.IdTipoEntregaNavigation)
+                .Include(p => p.IdOrdenNavigation)
+                    .ThenInclude(o => o!.IdUsuarioNavigation)
                 .Include(p => p.IdOrdenNavigation)
                     .ThenInclude(o => o!.DetalleOrdens)
                         .ThenInclude(d => d.IdProductoNavigation)
@@ -28,7 +33,9 @@ namespace BumburysRestaurant.Controllers
             if (!string.IsNullOrEmpty(buscar))
             {
                 query = query.Where(p => p.IdOrden.ToString().Contains(buscar) ||
-                                        (p.ReferenciaPago != null && p.ReferenciaPago.Contains(buscar)));
+                                        (p.ReferenciaPago != null && p.ReferenciaPago.Contains(buscar)) ||
+                                        (p.IdOrdenNavigation != null && p.IdOrdenNavigation.IdUsuarioNavigation != null &&
+                                         p.IdOrdenNavigation.IdUsuarioNavigation.NombreCompleto.Contains(buscar)));
             }
 
             var ventas = await query.OrderByDescending(p => p.FechaHoraPago).ToListAsync();
@@ -41,12 +48,14 @@ namespace BumburysRestaurant.Controllers
             return View(ventas);
         }
 
-        // 2. HISTORIAL DE PEDIDOS (Todas las órdenes)
+        // 2. HISTORIAL DE PEDIDOS (Administrador y Recepción)
+        [Authorize(Roles = "Administrador,Recepcion")]
         public async Task<IActionResult> HistorialOrdenes(string buscar, short? idEstado)
         {
             var query = _context.Ordenes
                 .Include(o => o.IdTipoEntregaNavigation)
                 .Include(o => o.IdEstadoNavigation)
+                .Include(o => o.IdUsuarioNavigation)
                 .Include(o => o.DetalleOrdens)
                     .ThenInclude(d => d.IdProductoNavigation)
                 .AsQueryable();
@@ -54,7 +63,8 @@ namespace BumburysRestaurant.Controllers
             if (!string.IsNullOrEmpty(buscar))
             {
                 query = query.Where(o => o.IdOrden.ToString().Contains(buscar) ||
-                                        (o.ObservacionGeneral != null && o.ObservacionGeneral.Contains(buscar)));
+                                        (o.ObservacionGeneral != null && o.ObservacionGeneral.Contains(buscar)) ||
+                                        (o.IdUsuarioNavigation != null && o.IdUsuarioNavigation.NombreCompleto.Contains(buscar)));
             }
 
             if (idEstado.HasValue && idEstado.Value > 0)
@@ -73,15 +83,16 @@ namespace BumburysRestaurant.Controllers
             return View(ordenes);
         }
 
-        // 3. CANCELAR ORDEN (Si aún no ha sido pagada/entregada)
+        // 3. CANCELAR ORDEN (Administrador y Recepción)
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Recepcion")]
         public async Task<IActionResult> CancelarOrden(long idOrden)
         {
             var orden = await _context.Ordenes.FindAsync(idOrden);
             if (orden != null && orden.IdEstado != 4)
             {
-                orden.IdEstado = 5; // Estado 5 = Cancelada
+                orden.IdEstado = 5;
                 await _context.SaveChangesAsync();
                 TempData["Exito"] = $"La Orden #{idOrden} ha sido cancelada.";
             }

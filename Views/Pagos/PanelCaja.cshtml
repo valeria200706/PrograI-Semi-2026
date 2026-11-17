@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Panel de Caja";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #b30000;">
+                <i class="bi bi-cash-coin me-2"></i>Estación de Caja y Para Llevar
+            </h2>
+            <p class="text-muted mb-0">Bienvenido(a), <strong>@User.Identity?.Name</strong></p>
+        </div>
+        <span class="badge bg-dark px-3 py-2 fs-6">@DateTime.Now.ToString("dd/MM/yyyy")</span>
+    </div>
+
+    <div class="row g-4">
+        <!-- Opción 1: Tomar Pedido Para Llevar / Mostrador -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-bag-plus-fill fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold">Nuevo Pedido (Para Llevar)</h4>
+                        <p class="text-muted small">Registra órdenes de clientes en mostrador o para llevar y envíalas directo a cocina.</p>
+                    </div>
+                    <a asp-controller="Recepcion" asp-action="Index" class="btn btn-danger fw-bold py-2 w-100 mt-3">
+                        <i class="bi bi-plus-circle me-1"></i> Tomar Pedido
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opción 2: Cobrar Órdenes Listas -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-3 border-top border-4 border-success">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-receipt-cutoff fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold">Cobrar Órdenes Listas</h4>
+                        <p class="text-muted small">Factura órdenes listas de salón o para llevar y genera el comprobante de pago.</p>
+                        <span class="badge bg-warning text-dark fs-6 mb-2">@ViewBag.PendientesCobro por cobrar</span>
+                    </div>
+                    <a asp-controller="Pagos" asp-action="Index" class="btn btn-success fw-bold py-2 w-100 mt-3">
+                        <i class="bi bi-cash-stack me-1"></i> Ir a Cobrar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opción 3: Historial de Cobros y Reclamos -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="rounded-circle bg-dark bg-opacity-10 text-dark d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                            <i class="bi bi-journal-check fs-1"></i>
+                        </div>
+                        <h4 class="fw-bold">Historial de Cobros y Pedidos</h4>
+                        <p class="text-muted small">Consulta tickets cobrados por meseros o caja ante cualquier reclamo o consulta.</p>
+                        <span class="badge bg-secondary mb-2">@ViewBag.CobradasHoy cobros hoy</span>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-controller="Reportes" asp-action="HistorialVentas" class="btn btn-dark fw-bold btn-sm py-2">
+                            <i class="bi bi-cash-coin me-1"></i> Ver Cobros Realizados
+                        </a>
+                        <a asp-controller="Reportes" asp-action="HistorialOrdenes" class="btn btn-outline-dark btn-sm">
+                            <i class="bi bi-list-ul me-1"></i> Ver Todos los Pedidos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

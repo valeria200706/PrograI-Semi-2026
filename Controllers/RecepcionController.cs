@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BumburysRestaurant.Models;
 
 namespace BumburysRestaurant.Controllers
 {
+    [Authorize(Roles = "Administrador,Cajero,Mesero,Recepcion")]
     public class RecepcionController : Controller
     {
         private readonly BumburysRestaurantDbContext _context;
@@ -13,11 +16,60 @@ namespace BumburysRestaurant.Controllers
             _context = context;
         }
 
-        // GET: Recepcion/Index (Pantalla principal de toma de pedidos)
-        public async Task<IActionResult> Index()
+        // DASHBOARD DEL MESERO
+        [Authorize(Roles = "Mesero,Administrador")]
+        public async Task<IActionResult> PanelMesero()
         {
-            // Cargar categorías y productos disponibles
-            var categorias = await _context.Categorias
+            var claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int idMesero = int.TryParse(claimId, out int idParsed) ? idParsed : 0;
+
+            ViewBag.Mesas = await _context.Mesas.OrderBy(m => m.IdMesa).ToListAsync();
+
+            var misOrdenesActivas = await _context.Ordenes
+                .Include(o => o.IdEstadoNavigation)
+                .Include(o => o.IdMesaNavigation)
+                .Include(o => o.IdTipoEntregaNavigation)
+                .Include(o => o.DetalleOrdens)
+                .Where(o => o.IdUsuario == idMesero && (o.IdEstado == 1 || o.IdEstado == 2 || o.IdEstado == 3))
+                .OrderByDescending(o => o.FechaHora)
+                .ToListAsync();
+
+            ViewBag.MisOrdenesCobradasHoy = await _context.Ordenes
+                .CountAsync(o => o.IdUsuario == idMesero && o.IdEstado == 4 && o.FechaHora.Date == DateTime.Today);
+
+            return View(misOrdenesActivas);
+        }
+
+        // DASHBOARD DE RECEPCIÓN (SUBGERENCIA / SALA / WEB)
+        [Authorize(Roles = "Recepcion,Administrador")]
+        public async Task<IActionResult> PanelRecepcion()
+        {
+            ViewBag.Mesas = await _context.Mesas.OrderBy(m => m.IdMesa).ToListAsync();
+
+            ViewBag.PedidosWeb = await _context.Ordenes
+                .Include(o => o.IdClienteNavigation)
+                .Include(o => o.DetalleOrdens)
+                    .ThenInclude(d => d.IdProductoNavigation)
+                .Where(o => o.IdEstado == 6)
+                .OrderBy(o => o.FechaHora)
+                .ToListAsync();
+
+            ViewBag.OrdenesEnCurso = await _context.Ordenes
+                .Include(o => o.IdEstadoNavigation)
+                .Include(o => o.IdUsuarioNavigation)
+                .Include(o => o.IdMesaNavigation)
+                .Include(o => o.IdTipoEntregaNavigation)
+                .Where(o => o.IdEstado == 1 || o.IdEstado == 2 || o.IdEstado == 3)
+                .OrderByDescending(o => o.FechaHora)
+                .ToListAsync();
+
+            return View();
+        }
+
+        // PANTALLA DE TOMA DE PEDIDOS (COMANDA Y MENÚ)
+        public async Task<IActionResult> Index(int? idMesaPreseleccionada)
+        {
+            ViewBag.Categorias = await _context.Categorias
                 .Where(c => c.Activa)
                 .OrderBy(c => c.OrdenVisual)
                 .ToListAsync();
@@ -27,8 +79,26 @@ namespace BumburysRestaurant.Controllers
                 .Where(p => p.Activo && p.Disponible)
                 .ToListAsync();
 
-            ViewBag.Categorias = categorias;
             ViewBag.TiposEntrega = await _context.TiposEntregas.ToListAsync();
+            ViewBag.Mesas = await _context.Mesas.OrderBy(m => m.IdMesa).ToListAsync();
+            ViewBag.MesaPreseleccionada = idMesaPreseleccionada;
+
+            ViewBag.OrdenesEnCurso = await _context.Ordenes
+                .Include(o => o.IdEstadoNavigation)
+                .Include(o => o.IdTipoEntregaNavigation)
+                .Include(o => o.IdUsuarioNavigation)
+                .Include(o => o.IdMesaNavigation)
+                .Where(o => o.IdEstado == 1 || o.IdEstado == 2 || o.IdEstado == 3)
+                .OrderByDescending(o => o.FechaHora)
+                .ToListAsync();
+
+            ViewBag.PedidosWeb = await _context.Ordenes
+                .Include(o => o.IdClienteNavigation)
+                .Include(o => o.DetalleOrdens)
+                    .ThenInclude(d => d.IdProductoNavigation)
+                .Where(o => o.IdEstado == 6)
+                .OrderBy(o => o.FechaHora)
+                .ToListAsync();
 
             return View(productos);
         }
@@ -42,10 +112,12 @@ namespace BumburysRestaurant.Controllers
                 return BadRequest(new { mensaje = "El pedido no contiene productos." });
             }
 
+            var claimIdUsuario = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int idUsuarioLogueado = int.TryParse(claimIdUsuario, out int idParsed) ? idParsed : 1;
+
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 1. Registrar o buscar cliente si aplica
                 int? idCliente = null;
                 int? idDireccion = null;
 
@@ -81,12 +153,21 @@ namespace BumburysRestaurant.Controllers
                     }
                 }
 
-                // 2. Crear la orden (Clase modelo generada como Ordene)
+                if (modelo.IdMesa.HasValue && modelo.IdMesa.Value > 0)
+                {
+                    var mesa = await _context.Mesas.FindAsync(modelo.IdMesa.Value);
+                    if (mesa != null)
+                    {
+                        mesa.EstadoMesa = "Ocupada";
+                    }
+                }
+
                 var orden = new Ordene
                 {
-                    IdEstado = 1, // 1 = Pendiente
+                    IdEstado = 1,
                     IdTipoEntrega = modelo.IdTipoEntrega,
-                    IdUsuario = 1, // Usuario Admin / Cajero por defecto
+                    IdUsuario = idUsuarioLogueado,
+                    IdMesa = (modelo.IdMesa.HasValue && modelo.IdMesa.Value > 0) ? modelo.IdMesa.Value : null,
                     IdCliente = idCliente,
                     IdDireccion = idDireccion,
                     FechaHora = DateTime.Now,
@@ -96,7 +177,6 @@ namespace BumburysRestaurant.Controllers
                 _context.Ordenes.Add(orden);
                 await _context.SaveChangesAsync();
 
-                // 3. Crear el detalle de la orden
                 foreach (var item in modelo.Detalles)
                 {
                     var producto = await _context.Productos.FindAsync(item.IdProducto);
@@ -113,15 +193,13 @@ namespace BumburysRestaurant.Controllers
                     _context.DetalleOrdens.Add(detalle);
                     await _context.SaveChangesAsync();
 
-                    // Guardar indicaciones si existen
                     if (!string.IsNullOrWhiteSpace(item.Indicacion))
                     {
-                        var indicacion = new IndicacionesDetalle
+                        _context.IndicacionesDetalles.Add(new IndicacionesDetalle
                         {
                             IdDetalle = detalle.IdDetalle,
                             Indicacion = item.Indicacion
-                        };
-                        _context.IndicacionesDetalles.Add(indicacion);
+                        });
                     }
                 }
 
@@ -136,12 +214,69 @@ namespace BumburysRestaurant.Controllers
                 return StatusCode(500, new { mensaje = "Error al guardar el pedido: " + ex.Message });
             }
         }
+
+        // POST: Cambiar Estado de Mesa (Recepción y Admin)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Recepcion")]
+        public async Task<IActionResult> CambiarEstadoMesa(int idMesa, string nuevoEstado, string? returnUrl)
+        {
+            var mesa = await _context.Mesas.FindAsync(idMesa);
+            if (mesa != null && (nuevoEstado == "Disponible" || nuevoEstado == "Ocupada" || nuevoEstado == "Sucia"))
+            {
+                mesa.EstadoMesa = nuevoEstado;
+                await _context.SaveChangesAsync();
+                TempData["Exito"] = $"{mesa.NumeroMesa} actualizada a: {nuevoEstado}.";
+            }
+            if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
+            return RedirectToAction(nameof(PanelRecepcion));
+        }
+
+        // POST: Marcar Servida en Mesa (Acción directa sin vista extra, solo Mesero)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Mesero")]
+        public async Task<IActionResult> MarcarServida(long idOrden, string? returnUrl)
+        {
+            var orden = await _context.Ordenes.FindAsync(idOrden);
+            if (orden != null && orden.IdEstado == 3)
+            {
+                string obs = orden.ObservacionGeneral ?? "";
+                if (!obs.Contains("[SERVIDA EN MESA]"))
+                {
+                    orden.ObservacionGeneral = string.IsNullOrWhiteSpace(obs)
+                        ? "[SERVIDA EN MESA]"
+                        : $"{obs} | [SERVIDA EN MESA]";
+                }
+                await _context.SaveChangesAsync();
+                TempData["Exito"] = $"Orden #{idOrden} marcada como servida en mesa. Ya aparece registrada para Recepción y Caja.";
+            }
+            if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
+            return RedirectToAction(nameof(PanelMesero));
+        }
+
+        // POST: Aprobar Pedido Web (Recepción)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Recepcion")]
+        public async Task<IActionResult> AprobarPedidoWeb(long idOrden, string? returnUrl)
+        {
+            var orden = await _context.Ordenes.FindAsync(idOrden);
+            if (orden != null && orden.IdEstado == 6)
+            {
+                orden.IdEstado = 1;
+                await _context.SaveChangesAsync();
+                TempData["Exito"] = $"Pedido Web #{idOrden} aprobado y enviado a Cocina.";
+            }
+            if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
+            return RedirectToAction(nameof(PanelRecepcion));
+        }
     }
 
-    // ViewModels auxiliares
     public class CrearOrdenViewModel
     {
         public short IdTipoEntrega { get; set; }
+        public int? IdMesa { get; set; }
         public string? NombreCliente { get; set; }
         public string? TelefonoCliente { get; set; }
         public string? DireccionCliente { get; set; }

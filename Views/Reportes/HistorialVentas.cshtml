@@ -1,49 +1,60 @@
 @model IEnumerable<BumburysRestaurant.Models.PagosVenta>
 @{
     ViewData["Title"] = "Historial de Ventas";
+    bool esAdmin = User.IsInRole("Administrador");
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
-    <h2 class="mb-0 fw-bold" style="color: #b30000;"><i class="bi bi-graph-up-arrow me-2"></i>Historial de Ventas</h2>
-    <button onclick="window.print()" class="btn btn-dark shadow-sm px-4"><i class="bi bi-printer me-2"></i>Imprimir Reporte</button>
+    <h2 class="mb-0 fw-bold" style="color: #b30000;">
+        <i class="bi bi-graph-up-arrow me-2"></i>@(esAdmin ? "Historial de Ventas" : "Historial de Cobros Realizados")
+    </h2>
+    @if (esAdmin)
+    {
+        <button onclick="window.print()" class="btn btn-dark shadow-sm px-4">
+            <i class="bi bi-printer me-2"></i>Imprimir Reporte
+        </button>
+    }
 </div>
 
-<!-- Tarjetas de Resumen Financiero -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-2">
-        <div class="card border-0 shadow-sm bg-success text-white h-100">
-            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                <div>
-                    <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ingresos Totales</h6>
-                    <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalIngresos).ToString("0.00"))</h3>
+<!-- Tarjetas de Resumen Financiero (Solo visibles para Administrador) -->
+@if (esAdmin)
+{
+    <div class="row mb-4">
+        <div class="col-md-4 mb-2">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                    <div>
+                        <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ingresos Totales</h6>
+                        <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalIngresos).ToString("0.00"))</h3>
+                    </div>
+                    <i class="bi bi-cash-stack fs-1 opacity-50"></i>
                 </div>
-                <i class="bi bi-cash-stack fs-1 opacity-50"></i>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                    <div>
+                        <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ventas en Tarjeta</h6>
+                        <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalTarjeta).ToString("0.00"))</h3>
+                    </div>
+                    <i class="bi bi-credit-card fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="card border-0 shadow-sm text-white h-100" style="background-color: #20c997;">
+                <div class="card-body d-flex justify-content-between align-items-center p-4">
+                    <div>
+                        <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ventas en Efectivo</h6>
+                        <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalEfectivo).ToString("0.00"))</h3>
+                    </div>
+                    <i class="bi bi-wallet2 fs-1 opacity-50"></i>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-2">
-        <div class="card border-0 shadow-sm bg-primary text-white h-100">
-            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                <div>
-                    <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ventas en Tarjeta</h6>
-                    <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalTarjeta).ToString("0.00"))</h3>
-                </div>
-                <i class="bi bi-credit-card fs-1 opacity-50"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-2">
-        <div class="card border-0 shadow-sm text-white h-100" style="background-color: #20c997;">
-            <div class="card-body d-flex justify-content-between align-items-center p-4">
-                <div>
-                    <h6 class="text-uppercase fw-bold mb-1 opacity-75">Ventas en Efectivo</h6>
-                    <h3 class="fw-bold mb-0">$@(((decimal)ViewBag.TotalEfectivo).ToString("0.00"))</h3>
-                </div>
-                <i class="bi bi-wallet2 fs-1 opacity-50"></i>
-            </div>
-        </div>
-    </div>
-</div>
+}
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-dark text-white py-3">
@@ -57,7 +68,7 @@
                 <div class="col-md-6">
                     <div class="input-group shadow-sm">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" name="buscar" value="@ViewBag.BuscarActual" class="form-control border-start-0" placeholder="Buscar por N° Orden o Referencia...">
+                        <input type="text" name="buscar" value="@ViewBag.BuscarActual" class="form-control border-start-0" placeholder="Buscar por N° Orden, mesero o referencia...">
                         <button type="submit" class="btn btn-secondary px-4">Filtrar</button>
                         <a asp-action="HistorialVentas" class="btn btn-outline-secondary">Limpiar</a>
                     </div>
@@ -72,6 +83,7 @@
                         <th>ID Pago</th>
                         <th>N° Orden</th>
                         <th>Fecha y Hora</th>
+                        <th>Atendido por</th>
                         <th>Método de Pago</th>
                         <th>Referencia</th>
                         <th class="text-end">Monto Cobrado</th>
@@ -88,7 +100,10 @@
                                 <td class="fw-bold fs-6">
                                     <span class="badge bg-dark">Orden #@pago.IdOrden</span>
                                 </td>
-                                <td>@pago.FechaHoraPago.ToString("dd/MM/yyyy - hh:mm tt")</td>
+                                <td class="small">@pago.FechaHoraPago.ToString("dd/MM/yyyy - hh:mm tt")</td>
+                                <td class="small fw-semibold text-dark">
+                                    <i class="bi bi-person-badge text-danger me-1"></i>@(pago.IdOrdenNavigation?.IdUsuarioNavigation?.NombreCompleto ?? "Sistema")
+                                </td>
                                 <td>
                                     <span class="badge bg-secondary">
                                         @(pago.IdMetodoPagoNavigation != null ? pago.IdMetodoPagoNavigation.NombreMetodo : "Desconocido")
@@ -107,7 +122,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">No se encontraron pagos registrados.</td>
+                            <td colspan="8" class="text-center py-5 text-muted">No se encontraron pagos registrados.</td>
                         </tr>
                     }
                 </tbody>
@@ -138,7 +153,8 @@
                         <div class="d-flex justify-content-between text-muted small mb-3 border-bottom pb-2">
                             <div>
                                 <strong>Fecha Pago:</strong> @pago.FechaHoraPago.ToString("dd/MM/yyyy hh:mm tt")<br />
-                                <strong>Modalidad:</strong> @(orden?.IdTipoEntregaNavigation?.NombreTipo ?? "N/A")
+                                <strong>Modalidad:</strong> @(orden?.IdTipoEntregaNavigation?.NombreTipo ?? "N/A")<br />
+                                <strong>Atendido por:</strong> @(orden?.IdUsuarioNavigation?.NombreCompleto ?? "Sistema")
                             </div>
                             <div class="text-end">
                                 <strong>Pago #@pago.IdPago</strong><br />
@@ -193,7 +209,7 @@
                             </div>
                             <div class="d-flex justify-content-between small text-muted mb-1">
                                 <span>Monto Recibido:</span>
-                               <span>$@pago.MontoRecibido.ToString("0.00")</span>
+                                <span>$@pago.MontoRecibido.ToString("0.00")</span>
                             </div>
                             <div class="d-flex justify-content-between small text-success fw-bold">
                                 <span>Cambio Devuelto:</span>

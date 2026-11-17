@@ -10,8 +10,8 @@
                 <h5 class="mb-0 fw-bold"><i class="bi bi-pencil-square me-2"></i>Editar Usuario</h5>
             </div>
             <div class="card-body bg-light p-4">
-                <form asp-action="Editar">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <form asp-action="Editar" method="post">
+                    <div asp-validation-summary="All" class="text-danger small mb-3"></div>
                     <!-- Campos ocultos para mantener el ID y la fecha original -->
                     <input type="hidden" asp-for="IdUsuario" />
                     <input type="hidden" asp-for="FechaCreacion" />

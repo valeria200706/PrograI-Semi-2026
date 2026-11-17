@@ -1,0 +1,227 @@
+@{
+    ViewData["Title"] = "Panel de Recepción y Sala";
+    var mesas = ViewBag.Mesas as IEnumerable<BumburysRestaurant.Models.Mesa>;
+    var pedidosWeb = ViewBag.PedidosWeb as IEnumerable<BumburysRestaurant.Models.Ordene>;
+    var ordenesEnCurso = ViewBag.OrdenesEnCurso as IEnumerable<BumburysRestaurant.Models.Ordene>;
+
+    int libres = mesas?.Count(m => m.EstadoMesa == "Disponible") ?? 0;
+    int ocupadas = mesas?.Count(m => m.EstadoMesa == "Ocupada") ?? 0;
+    int sucias = mesas?.Count(m => m.EstadoMesa == "Sucia") ?? 0;
+}
+
+<div class="container-fluid py-3">
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Exito"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Encabezado -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: #b30000;"><i class="bi bi-shop-window me-2"></i>Control de Sala y Recepción</h2>
+            <p class="text-muted mb-0">Subgerencia Operativa &bull; <strong>@User.Identity?.Name</strong></p>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
+            <a asp-controller="Recepcion" asp-action="Index" class="btn btn-danger fw-bold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Tomar Pedido
+            </a>
+            <a asp-controller="Reportes" asp-action="HistorialOrdenes" class="btn btn-dark fw-bold shadow-sm">
+                <i class="bi bi-journal-text me-1"></i> Historial de Pedidos
+            </a>
+            <a asp-controller="Productos" asp-action="Index" class="btn btn-outline-dark fw-bold shadow-sm">
+                <i class="bi bi-box-seam me-1"></i> Menú
+            </a>
+        </div>
+    </div>
+
+    <!-- KPIs de Sala y Web -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="small text-uppercase fw-bold opacity-75">Mesas Libres</div>
+                    <h2 class="fw-bold mb-0">@libres</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="small text-uppercase fw-bold opacity-75">Mesas Ocupadas</div>
+                    <h2 class="fw-bold mb-0">@ocupadas</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="small text-uppercase fw-bold opacity-75">Por Limpiar (Sucias)</div>
+                    <h2 class="fw-bold mb-0">@sucias</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="small text-uppercase fw-bold opacity-75">Pedidos Web Nuevos</div>
+                    <h2 class="fw-bold mb-0">@(pedidosWeb?.Count() ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 1: Control Completo de Mesas -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Gestión de Mesas (Avisar Disponibilidad / Limpieza)</h5>
+        </div>
+        <div class="card-body bg-light">
+            <div class="row g-3">
+                @if (mesas != null && mesas.Any())
+                {
+                    foreach (var m in mesas)
+                    {
+                        string borde = m.EstadoMesa == "Disponible" ? "border-success" : (m.EstadoMesa == "Ocupada" ? "border-danger" : "border-warning");
+                        string badge = m.EstadoMesa == "Disponible" ? "bg-success" : (m.EstadoMesa == "Ocupada" ? "bg-danger" : "bg-warning text-dark");
+
+                        <div class="col-6 col-md-3">
+                            <div class="card border-2 @borde shadow-sm text-center h-100">
+                                <div class="card-body p-3">
+                                    <h5 class="fw-bold mb-1">@m.NumeroMesa</h5>
+                                    <div class="small text-muted mb-2">Capacidad: @m.Capacidad personas</div>
+                                    <span class="badge @badge fs-6 mb-3">@m.EstadoMesa</span>
+
+                                    <div class="d-grid gap-1">
+                                        <form asp-action="CambiarEstadoMesa" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                            <input type="hidden" name="nuevoEstado" value="Disponible" />
+                                            <input type="hidden" name="returnUrl" value="/Recepcion/PanelRecepcion" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success w-100 fw-bold">
+                                                <i class="bi bi-check-circle me-1"></i>Marcar Disponible
+                                            </button>
+                                        </form>
+                                        <form asp-action="CambiarEstadoMesa" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                            <input type="hidden" name="nuevoEstado" value="Ocupada" />
+                                            <input type="hidden" name="returnUrl" value="/Recepcion/PanelRecepcion" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                                <i class="bi bi-people me-1"></i>Marcar Ocupada
+                                            </button>
+                                        </form>
+                                        <form asp-action="CambiarEstadoMesa" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                            <input type="hidden" name="nuevoEstado" value="Sucia" />
+                                            <input type="hidden" name="returnUrl" value="/Recepcion/PanelRecepcion" />
+                                            <button type="submit" class="btn btn-sm btn-outline-warning text-dark w-100">
+                                                <i class="bi bi-stars me-1"></i>Sucia (Limpiar)
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 2: Pedidos Web + Supervisión de Órdenes en Salón -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-primary shadow-sm h-100">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-globe me-2"></i>Pedidos Web por Confirmar</h5>
+                </div>
+                <div class="card-body bg-light">
+                    @if (pedidosWeb != null && pedidosWeb.Any())
+                    {
+                        foreach (var web in pedidosWeb)
+                        {
+                            <div class="card border-0 shadow-sm mb-2">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong class="text-primary">Orden Web #@web.IdOrden</strong> - @(web.IdClienteNavigation?.NombreCliente ?? "Cliente Web")<br />
+                                        <small class="text-muted">@web.DetalleOrdens.Sum(d => d.Cantidad) productos &bull; $@web.DetalleOrdens.Sum(d => d.Cantidad * d.PrecioUnitario).ToString("0.00")</small>
+                                    </div>
+                                    <form asp-action="AprobarPedidoWeb" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="idOrden" value="@web.IdOrden" />
+                                        <input type="hidden" name="returnUrl" value="/Recepcion/PanelRecepcion" />
+                                        <button type="submit" class="btn btn-primary btn-sm fw-bold">
+                                            <i class="bi bi-send-check me-1"></i>Enviar a Cocina
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2 text-primary"></i>
+                            No hay pedidos en línea pendientes de aprobación.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-eye-fill me-2"></i>Supervisión de Órdenes Activas</h5>
+                    <button type="button" class="btn btn-sm btn-outline-light" onclick="location.reload()">Actualizar</button>
+                </div>
+                <div class="card-body bg-light">
+                    @if (ordenesEnCurso != null && ordenesEnCurso.Any())
+                    {
+                        <div class="table-responsive bg-white rounded shadow-sm">
+                            <table class="table table-sm table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Orden</th>
+                                        <th>Mesero</th>
+                                        <th>Mesa / Tipo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ord in ordenesEnCurso)
+                                    {
+                                        bool servida = ord.ObservacionGeneral != null && ord.ObservacionGeneral.Contains("[SERVIDA EN MESA]");
+                                        <tr>
+                                            <td class="fw-bold">#@ord.IdOrden</td>
+                                            <td class="small">@(ord.IdUsuarioNavigation?.NombreCompleto ?? "Staff")</td>
+                                            <td class="small">@(ord.IdMesaNavigation?.NumeroMesa ?? ord.IdTipoEntregaNavigation?.NombreTipo)</td>
+                                            <td>
+                                                @if (servida)
+                                                {
+                                                    <span class="badge bg-info text-dark">Servida en Mesa</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">@(ord.IdEstadoNavigation?.NombreEstado)</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4 text-muted">No hay órdenes activas en este momento.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,6 +17,8 @@ public partial class Ordene
 
     public int? IdDireccion { get; set; }
 
+    public int? IdMesa { get; set; }
+
     public DateTime FechaHora { get; set; }
 
     public string? ObservacionGeneral { get; set; }
@@ -28,6 +30,8 @@ public partial class Ordene
     public virtual DireccionCliente? IdDireccionNavigation { get; set; }
 
     public virtual EstadosOrden IdEstadoNavigation { get; set; } = null!;
+
+    public virtual Mesa? IdMesaNavigation { get; set; }
 
     public virtual TiposEntrega IdTipoEntregaNavigation { get; set; } = null!;
 

@@ -1,19 +1,226 @@
-﻿@model IEnumerable<BumburysRestaurant.Models.Producto>
+﻿@using System.Security.Claims
+@model IEnumerable<BumburysRestaurant.Models.Producto>
 @{
-    ViewData["Title"] = "Recepción de Pedidos";
+    ViewData["Title"] = "Toma de Pedidos y Sala";
+    var ordenesEnCurso = ViewBag.OrdenesEnCurso as IEnumerable<BumburysRestaurant.Models.Ordene>;
+    var mesas = ViewBag.Mesas as IEnumerable<BumburysRestaurant.Models.Mesa>;
+    var pedidosWeb = ViewBag.PedidosWeb as IEnumerable<BumburysRestaurant.Models.Ordene>;
+    int? mesaPreseleccionada = ViewBag.MesaPreseleccionada as int?;
+
+    string rolActual = User.FindFirstValue(ClaimTypes.Role) ?? "";
+    bool esRecepcionOAdmin = rolActual.Equals("Administrador", StringComparison.OrdinalIgnoreCase) ||
+                             rolActual.Equals("Recepcion", StringComparison.OrdinalIgnoreCase);
+    bool esMesero = rolActual.Equals("Mesero", StringComparison.OrdinalIgnoreCase);
+    bool esCajero = rolActual.Equals("Cajero", StringComparison.OrdinalIgnoreCase);
 }
 
-<div class="row mt-3">
+@if (TempData["Exito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm mt-3" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Exito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- 1. BANDEJA DE PEDIDOS WEB ENTRANTES (Siempre visible para Recepción y Admin) -->
+@if (esRecepcionOAdmin)
+{
+    <div class="card border-primary shadow-sm mt-3 mb-3">
+        <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
+            <span class="fw-bold small">
+                <i class="bi bi-globe me-2"></i>Pedidos Web en Línea por Confirmar (@(pedidosWeb?.Count() ?? 0))
+            </span>
+            <span class="badge bg-white text-primary" style="font-size: 0.7rem;">Recepción Online</span>
+        </div>
+        <div class="card-body py-2 bg-light">
+            @if (pedidosWeb != null && pedidosWeb.Any())
+            {
+                <div class="row g-2">
+                    @foreach (var web in pedidosWeb)
+                    {
+                        <div class="col-md-4">
+                            <div class="bg-white border rounded p-2 shadow-sm d-flex justify-content-between align-items-center">
+                                <div class="small">
+                                    <strong class="text-primary">Web #@web.IdOrden</strong> - @(web.IdClienteNavigation?.NombreCliente ?? "Cliente Online")<br />
+                                    <span class="text-muted">@web.DetalleOrdens.Sum(d => d.Cantidad) prod. &bull; $@web.DetalleOrdens.Sum(d => d.Cantidad * d.PrecioUnitario).ToString("0.00")</span>
+                                </div>
+                                <form asp-action="AprobarPedidoWeb" method="post" class="m-0">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="idOrden" value="@web.IdOrden" />
+                                    <input type="hidden" name="returnUrl" value="/Recepcion/Index" />
+                                    <button type="submit" class="btn btn-sm btn-primary fw-bold">
+                                        <i class="bi bi-send-check me-1"></i>A Cocina
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <span class="text-muted small"><i class="bi bi-inbox me-1 text-primary"></i>No hay pedidos web pendientes de aprobación en este momento.</span>
+            }
+        </div>
+    </div>
+}
+
+<!-- 2. MAPA DE MESAS EN TIEMPO REAL (Meseros ven disponibilidad; Recepción gestiona estados) -->
+@if (!esCajero && mesas != null && mesas.Any())
+{
+    <div class="card border-0 shadow-sm mt-3 mb-3 bg-white">
+        <div class="card-header bg-secondary text-white py-2 d-flex justify-content-between align-items-center">
+            <span class="fw-bold small">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>Estado de Mesas en Salón
+            </span>
+            <div class="small">
+                <span class="badge bg-success me-1">Disponible</span>
+                <span class="badge bg-danger me-1">Ocupada</span>
+                <span class="badge bg-warning text-dark">Sucia / Limpiar</span>
+            </div>
+        </div>
+        <div class="card-body py-2 px-3 bg-light">
+            <div class="row g-2">
+                @foreach (var m in mesas)
+                {
+                    string colorCard = m.EstadoMesa switch
+                    {
+                        "Disponible" => "border-success text-success",
+                        "Ocupada" => "border-danger text-danger",
+                        _ => "border-warning text-dark bg-warning bg-opacity-10"
+                    };
+                    string badgeMesa = m.EstadoMesa switch
+                    {
+                        "Disponible" => "bg-success",
+                        "Ocupada" => "bg-danger",
+                        _ => "bg-warning text-dark"
+                    };
+
+                    <div class="col-6 col-sm-3 col-lg-2">
+                        <div class="border border-2 @colorCard rounded bg-white p-2 text-center shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="fw-bold small text-dark">@m.NumeroMesa <span class="text-muted fw-normal">(@m.Capacidad p.)</span></div>
+                                <span class="badge @badgeMesa my-1" style="font-size: 0.68rem;">@m.EstadoMesa</span>
+                            </div>
+
+                            @if (esRecepcionOAdmin)
+                            {
+                                <div class="btn-group btn-group-sm mt-1" role="group">
+                                    <form asp-action="CambiarEstadoMesa" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                        <input type="hidden" name="nuevoEstado" value="Disponible" />
+                                        <input type="hidden" name="returnUrl" value="/Recepcion/Index" />
+                                        <button type="submit" class="btn btn-outline-success py-0 px-1" title="Marcar Disponible"><i class="bi bi-check"></i></button>
+                                    </form>
+                                    <form asp-action="CambiarEstadoMesa" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                        <input type="hidden" name="nuevoEstado" value="Ocupada" />
+                                        <input type="hidden" name="returnUrl" value="/Recepcion/Index" />
+                                        <button type="submit" class="btn btn-outline-danger py-0 px-1" title="Marcar Ocupada"><i class="bi bi-people"></i></button>
+                                    </form>
+                                    <form asp-action="CambiarEstadoMesa" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="idMesa" value="@m.IdMesa" />
+                                        <input type="hidden" name="nuevoEstado" value="Sucia" />
+                                        <input type="hidden" name="returnUrl" value="/Recepcion/Index" />
+                                        <button type="submit" class="btn btn-outline-warning py-0 px-1" title="Marcar Sucia (Limpiar)"><i class="bi bi-stars"></i></button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<!-- 3. MONITOR RÁPIDO DE ÓRDENES EN COCINA (Solo Mesero tiene botón Marcar Servida) -->
+<div class="card border-0 shadow-sm mb-3 bg-white">
+    <div class="card-header bg-dark text-white py-2 d-flex justify-content-between align-items-center">
+        <span class="fw-bold small">
+            <i class="bi bi-broadcast text-warning me-2"></i>Monitor de Cocina (Órdenes en Curso y Listas para Servir)
+        </span>
+        <button type="button" class="btn btn-sm btn-outline-light py-0" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+        </button>
+    </div>
+    <div class="card-body py-2 px-3 bg-light">
+        @if (ordenesEnCurso != null && ordenesEnCurso.Any())
+        {
+            <div class="d-flex flex-nowrap overflow-auto gap-2 py-1">
+                @foreach (var ord in ordenesEnCurso)
+                {
+                    bool yaServida = ord.ObservacionGeneral != null && ord.ObservacionGeneral.Contains("[SERVIDA EN MESA]");
+                    string badgeColor = ord.IdEstado switch
+                    {
+                        1 => "bg-warning text-dark",
+                        2 => "bg-primary text-white",
+                        3 => yaServida ? "bg-info text-dark" : "bg-success text-white",
+                        _ => "bg-secondary text-white"
+                    };
+                    string textoEstado = ord.IdEstado == 3
+                        ? (yaServida ? "Servida (Por Cobrar)" : "¡LISTO EN COCINA!")
+                        : (ord.IdEstadoNavigation?.NombreEstado ?? "En curso");
+
+                    <div class="border rounded bg-white px-3 py-2 shadow-sm flex-shrink-0" style="min-width: 220px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold text-dark small">
+                                Orden #@ord.IdOrden @(ord.IdMesaNavigation != null ? $"• {ord.IdMesaNavigation.NumeroMesa}" : "")
+                            </span>
+                            <span class="badge @badgeColor" style="font-size: 0.68rem;">@textoEstado</span>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            <i class="bi bi-person-badge me-1"></i>@(ord.IdUsuarioNavigation?.NombreCompleto ?? "Staff")
+                        </div>
+                        <div class="text-secondary mb-1" style="font-size: 0.72rem;">
+                            <i class="bi bi-bag me-1"></i>@(ord.IdTipoEntregaNavigation?.NombreTipo ?? "Local") &bull; @ord.FechaHora.ToString("hh:mm tt")
+                        </div>
+
+                        @if (esMesero && ord.IdEstado == 3 && !yaServida)
+                        {
+                            <form asp-action="MarcarServida" method="post" class="mt-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="idOrden" value="@ord.IdOrden" />
+                                <input type="hidden" name="returnUrl" value="/Recepcion/Index" />
+                                <button type="submit" class="btn btn-sm btn-success w-100 py-0 fw-bold" style="font-size: 0.75rem;">
+                                    <i class="bi bi-check2-all me-1"></i>Marcar Servida en Mesa
+                                </button>
+                            </form>
+                        }
+                        else if (esMesero && ord.IdEstado == 3 && yaServida)
+                        {
+                            <a asp-controller="Pagos" asp-action="Cobrar" asp-route-id="@ord.IdOrden" class="btn btn-sm btn-outline-dark w-100 py-0 mt-1 fw-bold" style="font-size: 0.75rem;">
+                                <i class="bi bi-cash-coin me-1"></i>Cobrar Orden
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <span class="text-muted small"><i class="bi bi-check-circle me-1 text-success"></i>No hay órdenes pendientes en cocina en este momento.</span>
+        }
+    </div>
+</div>
+
+<!-- 4. CATÁLOGO DE MENÚ Y COMANDA -->
+<div class="row mt-2">
     <!-- Panel Izquierdo: Menú -->
     <div class="col-md-8">
-        <!-- Encabezado con Logo -->
         <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREJnh8ymp-B4dsMmkj7CTwtfeSPhq7bg-4wRknxJVIAyEGk3u5RcOB6jvq&s=10" 
-                 alt="Logo Bumbury's" class="me-3 shadow-sm" style="height: 65px; border-radius: 8px; object-fit: cover;">
-            <h2 class="mb-0 fw-bold" style="color: #b30000;">Menú del Restaurante</h2>
+                 alt="Logo Bumbury's" class="me-3 shadow-sm" style="height: 60px; border-radius: 8px; object-fit: cover;">
+            <div>
+                <h2 class="mb-0 fw-bold" style="color: #b30000;">Menú del Restaurante</h2>
+                <small class="text-muted">Atendiendo: <strong>@User.Identity?.Name</strong> (@rolActual)</small>
+            </div>
         </div>
 
-        <!-- Filtros de Categoría Dinámicos -->
+        <!-- Filtros de Categoría -->
         <div class="mb-4" id="contenedor-filtros">
             <button class="btn btn-dark me-2 mb-2 px-4 shadow-sm btn-filtro" data-id="0">Todos</button>
             @if (ViewBag.Categorias != null)
@@ -27,7 +234,7 @@
             }
         </div>
 
-        <!-- Catálogo de Productos Dinámicos -->
+        <!-- Catálogo de Productos -->
         <div class="row" id="catalogo-productos">
             @if (Model != null && Model.Any())
             {
@@ -74,26 +281,42 @@
             </div>
             <div class="card-body bg-light">
                 
-                <div class="mb-3">
-                    <label class="form-label fw-bold small text-secondary">Tipo de Entrega:</label>
-                    <select class="form-select shadow-sm border-0" id="tipo-entrega">
-                        @if (ViewBag.TiposEntrega != null)
-                        {
-                            foreach (var tipo in ViewBag.TiposEntrega)
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold small text-secondary">Modalidad:</label>
+                        <select class="form-select shadow-sm border-0" id="tipo-entrega">
+                            @if (ViewBag.TiposEntrega != null)
                             {
-                                <option value="@tipo.IdTipoEntrega">@tipo.NombreTipo</option> 
+                                foreach (var tipo in ViewBag.TiposEntrega)
+                                {
+                                    bool esParaLlevar = tipo.NombreTipo.ToString().Contains("Llevar", StringComparison.OrdinalIgnoreCase);
+                                    <option value="@tipo.IdTipoEntrega" selected="@(esCajero && esParaLlevar)">@tipo.NombreTipo</option> 
+                                }
                             }
-                        }
-                        else
-                        {
-                            <option value="1">Comer Aquí</option>
-                            <option value="2">Para Llevar</option>
-                        }
-                    </select>
+                            else
+                            {
+                                <option value="1">Comer Aquí</option>
+                                <option value="2" selected="@esCajero">Para Llevar</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold small text-secondary">Mesa (Salón):</label>
+                        <select class="form-select shadow-sm border-0" id="mesa-seleccionada">
+                            <option value="0">-- Sin Mesa / Llevar --</option>
+                            @if (mesas != null)
+                            {
+                                foreach (var m in mesas.Where(x => x.EstadoMesa == "Disponible"))
+                                {
+                                    <option value="@m.IdMesa" selected="@(mesaPreseleccionada == m.IdMesa)">@m.NumeroMesa (@m.Capacidad p.)</option>
+                                }
+                            }
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Tabla del Carrito -->
-                <div class="table-responsive bg-white rounded shadow-sm mb-3" style="max-height: 250px; overflow-y: auto;">
+                <div class="table-responsive bg-white rounded shadow-sm mb-3" style="max-height: 230px; overflow-y: auto;">
                     <table class="table table-borderless table-sm text-center mb-0">
                         <thead class="table-light border-bottom sticky-top">
                             <tr>
@@ -111,8 +334,8 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold small text-secondary">Observación General:</label>
-                    <input type="text" id="observacion-general" class="form-control shadow-sm border-0" placeholder="Ej: Entregar con servilletas extra">
+                    <label class="form-label fw-bold small text-secondary">Observación / Nombre Cliente:</label>
+                    <input type="text" id="observacion-general" class="form-control shadow-sm border-0" placeholder="Ej: Sin cebolla / Cliente Juan">
                 </div>
 
                 <hr class="text-muted">
@@ -133,7 +356,6 @@
     <script>
         let comanda = [];
 
-        // 1. Filtrado de Categorías
         document.querySelectorAll('.btn-filtro').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.btn-filtro').forEach(b => {
@@ -154,7 +376,6 @@
             });
         });
 
-        // 2. Agregar Producto a Comanda
         document.querySelectorAll('.btn-agregar').forEach(btn => {
             btn.addEventListener('click', function() {
                 let id = this.getAttribute('data-id');
@@ -171,7 +392,6 @@
             });
         });
 
-        // 3. Renderizar Tabla y Total
         function actualizarInterfaz() {
             let tbody = document.getElementById('cuerpo-comanda');
             let totalEl = document.getElementById('total-comanda');
@@ -205,7 +425,6 @@
             totalEl.innerText = `$${total.toFixed(2)}`;
         }
 
-        // 4. Cambiar Cantidad de Producto
         window.cambiarCantidad = function(index, delta) {
             comanda[index].Cantidad += delta;
             if (comanda[index].Cantidad <= 0) {
@@ -214,22 +433,24 @@
             actualizarInterfaz();
         }
 
-        // 5. Limpiar Comanda Completa
         document.getElementById('btn-limpiar').addEventListener('click', () => {
             comanda = [];
             document.getElementById('observacion-general').value = '';
+            document.getElementById('mesa-seleccionada').value = '0';
             actualizarInterfaz();
         });
 
-        // 6. Enviar Pedido a Base de Datos
         document.getElementById('btn-confirmar').addEventListener('click', async () => {
             if (comanda.length === 0) {
                 alert('La comanda está vacía. Selecciona productos del menú.');
                 return;
             }
 
+            let idMesaVal = parseInt(document.getElementById('mesa-seleccionada').value) || 0;
+
             let payload = {
                 IdTipoEntrega: parseInt(document.getElementById('tipo-entrega').value) || 1,
+                IdMesa: idMesaVal > 0 ? idMesaVal : null,
                 ObservacionGeneral: document.getElementById('observacion-general').value,
                 Detalles: comanda.map(p => ({
                     IdProducto: parseInt(p.IdProducto),
@@ -253,7 +474,7 @@
 
                 if (response.ok && data.exito) {
                     alert('¡Pedido exitoso! Se ha generado la Orden #' + data.idOrden);
-                    document.getElementById('btn-limpiar').click(); 
+                    location.reload();
                 } else {
                     alert(data.mensaje || 'Error desconocido al guardar la orden.');
                 }
