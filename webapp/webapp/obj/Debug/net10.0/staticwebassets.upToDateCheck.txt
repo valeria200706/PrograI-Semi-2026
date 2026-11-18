@@ -1,10 +1,11 @@
 wwwroot\img\logo.png
 wwwroot\img\logo.webp
+wwwroot\img\logougb.webp
 wwwroot\views\alumno.html
 wwwroot\views\app.js
-wwwroot\views\index.html
 wwwroot\views\busqueda_alumno.html
-C:\Users\Luis Hernandez\Desktop\PrograI-Semi-2026\webapp\webapp\wwwroot\views\alumno.html
-C:\Users\Luis Hernandez\Desktop\PrograI-Semi-2026\webapp\webapp\wwwroot\views\app.js
-C:\Users\Luis Hernandez\Desktop\PrograI-Semi-2026\webapp\webapp\wwwroot\views\index.html
-C:\Users\Luis Hernandez\Desktop\PrograI-Semi-2026\webapp\webapp\wwwroot\views\busqueda_alumno.html
+wwwroot\views\index.html
+C:\Users\valer\source\repos\PrograI-Semi-2026\webapp\webapp\wwwroot\views\app.js
+C:\Users\valer\source\repos\PrograI-Semi-2026\webapp\webapp\wwwroot\views\alumno.html
+C:\Users\valer\source\repos\PrograI-Semi-2026\webapp\webapp\wwwroot\views\index.html
+C:\Users\valer\source\repos\PrograI-Semi-2026\webapp\webapp\wwwroot\views\busqueda_alumno.html
